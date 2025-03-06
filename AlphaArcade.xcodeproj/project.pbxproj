@@ -1,0 +1,587 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */; };
+		A1F8682E2D7A5C910014FF4B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682D2D7A5C910014FF4B /* ContentView.swift */; };
+		A1F868302D7A5C990014FF4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F8682F2D7A5C990014FF4B /* Assets.xcassets */; };
+		A1F868332D7A5C990014FF4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F868322D7A5C990014FF4B /* Preview Assets.xcassets */; };
+		A1F8683D2D7A5C9A0014FF4B /* AlphaArcadeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8683C2D7A5C9A0014FF4B /* AlphaArcadeTests.swift */; };
+		A1F868472D7A5C9A0014FF4B /* AlphaArcadeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F868462D7A5C9A0014FF4B /* AlphaArcadeUITests.swift */; };
+		A1F868492D7A5C9A0014FF4B /* AlphaArcadeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F868482D7A5C9A0014FF4B /* AlphaArcadeUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1F868392D7A5C9A0014FF4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1F868202D7A5C910014FF4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1F868272D7A5C910014FF4B;
+			remoteInfo = AlphaArcade;
+		};
+		A1F868432D7A5C9A0014FF4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1F868202D7A5C910014FF4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1F868272D7A5C910014FF4B;
+			remoteInfo = AlphaArcade;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A1F868282D7A5C910014FF4B /* AlphaArcade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaArcade.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeApp.swift; sourceTree = "<group>"; };
+		A1F8682D2D7A5C910014FF4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1F8682F2D7A5C990014FF4B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1F868322D7A5C990014FF4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A1F868382D7A5C9A0014FF4B /* AlphaArcadeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlphaArcadeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1F8683C2D7A5C9A0014FF4B /* AlphaArcadeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeTests.swift; sourceTree = "<group>"; };
+		A1F868422D7A5C9A0014FF4B /* AlphaArcadeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlphaArcadeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1F868462D7A5C9A0014FF4B /* AlphaArcadeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeUITests.swift; sourceTree = "<group>"; };
+		A1F868482D7A5C9A0014FF4B /* AlphaArcadeUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1F868252D7A5C910014FF4B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F868352D7A5C9A0014FF4B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F8683F2D7A5C9A0014FF4B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1F8681F2D7A5C910014FF4B = {
+			isa = PBXGroup;
+			children = (
+				A1F8682A2D7A5C910014FF4B /* AlphaArcade */,
+				A1F8683B2D7A5C9A0014FF4B /* AlphaArcadeTests */,
+				A1F868452D7A5C9A0014FF4B /* AlphaArcadeUITests */,
+				A1F868292D7A5C910014FF4B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1F868292D7A5C910014FF4B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1F868282D7A5C910014FF4B /* AlphaArcade.app */,
+				A1F868382D7A5C9A0014FF4B /* AlphaArcadeTests.xctest */,
+				A1F868422D7A5C9A0014FF4B /* AlphaArcadeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1F8682A2D7A5C910014FF4B /* AlphaArcade */ = {
+			isa = PBXGroup;
+			children = (
+				A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */,
+				A1F8682D2D7A5C910014FF4B /* ContentView.swift */,
+				A1F8682F2D7A5C990014FF4B /* Assets.xcassets */,
+				A1F868312D7A5C990014FF4B /* Preview Content */,
+			);
+			path = AlphaArcade;
+			sourceTree = "<group>";
+		};
+		A1F868312D7A5C990014FF4B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				A1F868322D7A5C990014FF4B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		A1F8683B2D7A5C9A0014FF4B /* AlphaArcadeTests */ = {
+			isa = PBXGroup;
+			children = (
+				A1F8683C2D7A5C9A0014FF4B /* AlphaArcadeTests.swift */,
+			);
+			path = AlphaArcadeTests;
+			sourceTree = "<group>";
+		};
+		A1F868452D7A5C9A0014FF4B /* AlphaArcadeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A1F868462D7A5C9A0014FF4B /* AlphaArcadeUITests.swift */,
+				A1F868482D7A5C9A0014FF4B /* AlphaArcadeUITestsLaunchTests.swift */,
+			);
+			path = AlphaArcadeUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1F868272D7A5C910014FF4B /* AlphaArcade */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1F8684C2D7A5C9A0014FF4B /* Build configuration list for PBXNativeTarget "AlphaArcade" */;
+			buildPhases = (
+				A1F868242D7A5C910014FF4B /* Sources */,
+				A1F868252D7A5C910014FF4B /* Frameworks */,
+				A1F868262D7A5C910014FF4B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AlphaArcade;
+			productName = AlphaArcade;
+			productReference = A1F868282D7A5C910014FF4B /* AlphaArcade.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A1F868372D7A5C9A0014FF4B /* AlphaArcadeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1F8684F2D7A5C9A0014FF4B /* Build configuration list for PBXNativeTarget "AlphaArcadeTests" */;
+			buildPhases = (
+				A1F868342D7A5C9A0014FF4B /* Sources */,
+				A1F868352D7A5C9A0014FF4B /* Frameworks */,
+				A1F868362D7A5C9A0014FF4B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1F8683A2D7A5C9A0014FF4B /* PBXTargetDependency */,
+			);
+			name = AlphaArcadeTests;
+			productName = AlphaArcadeTests;
+			productReference = A1F868382D7A5C9A0014FF4B /* AlphaArcadeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A1F868412D7A5C9A0014FF4B /* AlphaArcadeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1F868522D7A5C9A0014FF4B /* Build configuration list for PBXNativeTarget "AlphaArcadeUITests" */;
+			buildPhases = (
+				A1F8683E2D7A5C9A0014FF4B /* Sources */,
+				A1F8683F2D7A5C9A0014FF4B /* Frameworks */,
+				A1F868402D7A5C9A0014FF4B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1F868442D7A5C9A0014FF4B /* PBXTargetDependency */,
+			);
+			name = AlphaArcadeUITests;
+			productName = AlphaArcadeUITests;
+			productReference = A1F868422D7A5C9A0014FF4B /* AlphaArcadeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1F868202D7A5C910014FF4B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					A1F868272D7A5C910014FF4B = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					A1F868372D7A5C9A0014FF4B = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = A1F868272D7A5C910014FF4B;
+					};
+					A1F868412D7A5C9A0014FF4B = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = A1F868272D7A5C910014FF4B;
+					};
+				};
+			};
+			buildConfigurationList = A1F868232D7A5C910014FF4B /* Build configuration list for PBXProject "AlphaArcade" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1F8681F2D7A5C910014FF4B;
+			productRefGroup = A1F868292D7A5C910014FF4B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1F868272D7A5C910014FF4B /* AlphaArcade */,
+				A1F868372D7A5C9A0014FF4B /* AlphaArcadeTests */,
+				A1F868412D7A5C9A0014FF4B /* AlphaArcadeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1F868262D7A5C910014FF4B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1F868332D7A5C990014FF4B /* Preview Assets.xcassets in Resources */,
+				A1F868302D7A5C990014FF4B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F868362D7A5C9A0014FF4B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F868402D7A5C9A0014FF4B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1F868242D7A5C910014FF4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1F8682E2D7A5C910014FF4B /* ContentView.swift in Sources */,
+				A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F868342D7A5C9A0014FF4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1F8683D2D7A5C9A0014FF4B /* AlphaArcadeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1F8683E2D7A5C9A0014FF4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1F868472D7A5C9A0014FF4B /* AlphaArcadeUITests.swift in Sources */,
+				A1F868492D7A5C9A0014FF4B /* AlphaArcadeUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1F8683A2D7A5C9A0014FF4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1F868272D7A5C910014FF4B /* AlphaArcade */;
+			targetProxy = A1F868392D7A5C9A0014FF4B /* PBXContainerItemProxy */;
+		};
+		A1F868442D7A5C9A0014FF4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1F868272D7A5C910014FF4B /* AlphaArcade */;
+			targetProxy = A1F868432D7A5C9A0014FF4B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A1F8684A2D7A5C9A0014FF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1F8684B2D7A5C9A0014FF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A1F8684D2D7A5C9A0014FF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AlphaArcade/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcade;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1F8684E2D7A5C9A0014FF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AlphaArcade/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcade;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A1F868502D7A5C9A0014FF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcadeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AlphaArcade.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AlphaArcade";
+			};
+			name = Debug;
+		};
+		A1F868512D7A5C9A0014FF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcadeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AlphaArcade.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AlphaArcade";
+			};
+			name = Release;
+		};
+		A1F868532D7A5C9A0014FF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcadeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AlphaArcade;
+			};
+			name = Debug;
+		};
+		A1F868542D7A5C9A0014FF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcadeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AlphaArcade;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1F868232D7A5C910014FF4B /* Build configuration list for PBXProject "AlphaArcade" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1F8684A2D7A5C9A0014FF4B /* Debug */,
+				A1F8684B2D7A5C9A0014FF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1F8684C2D7A5C9A0014FF4B /* Build configuration list for PBXNativeTarget "AlphaArcade" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1F8684D2D7A5C9A0014FF4B /* Debug */,
+				A1F8684E2D7A5C9A0014FF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1F8684F2D7A5C9A0014FF4B /* Build configuration list for PBXNativeTarget "AlphaArcadeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1F868502D7A5C9A0014FF4B /* Debug */,
+				A1F868512D7A5C9A0014FF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1F868522D7A5C9A0014FF4B /* Build configuration list for PBXNativeTarget "AlphaArcadeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1F868532D7A5C9A0014FF4B /* Debug */,
+				A1F868542D7A5C9A0014FF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1F868202D7A5C910014FF4B /* Project object */;
+}
