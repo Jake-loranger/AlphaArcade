@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */; };
-		A1F8682E2D7A5C910014FF4B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682D2D7A5C910014FF4B /* ContentView.swift */; };
+		A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682D2D7A5C910014FF4B /* MainView.swift */; };
 		A1F868302D7A5C990014FF4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F8682F2D7A5C990014FF4B /* Assets.xcassets */; };
 		A1F868332D7A5C990014FF4B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F868322D7A5C990014FF4B /* Preview Assets.xcassets */; };
 		A1F8683D2D7A5C9A0014FF4B /* AlphaArcadeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8683C2D7A5C9A0014FF4B /* AlphaArcadeTests.swift */; };
@@ -36,7 +36,7 @@
 /* Begin PBXFileReference section */
 		A1F868282D7A5C910014FF4B /* AlphaArcade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaArcade.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeApp.swift; sourceTree = "<group>"; };
-		A1F8682D2D7A5C910014FF4B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1F8682D2D7A5C910014FF4B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		A1F8682F2D7A5C990014FF4B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1F868322D7A5C990014FF4B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A1F868382D7A5C9A0014FF4B /* AlphaArcadeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlphaArcadeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */,
-				A1F8682D2D7A5C910014FF4B /* ContentView.swift */,
+				A1F8682D2D7A5C910014FF4B /* MainView.swift */,
 				A1F8682F2D7A5C990014FF4B /* Assets.xcassets */,
 				A1F868312D7A5C990014FF4B /* Preview Content */,
 			);
@@ -257,7 +257,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1F8682E2D7A5C910014FF4B /* ContentView.swift in Sources */,
+				A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */,
 				A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
