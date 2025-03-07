@@ -224,8 +224,8 @@ struct MarketInfoView: View {
 }
 
 struct MarketChartView: View {
-    let yesData: [Double] = [10, 20, 15, 30, 25, 40, 35, 100]
-    let noData: [Double] = [70, 80, 15, 70, 25, 70, 35, 0]
+    let yesData: [Double] = [10, 20, 15, 30, 25, 40, 35, 91]
+    let noData: [Double] = [90, 80, 85, 70, 75, 60, 65, 9]
     let yesColor: Color = Color.red
     let noColor: Color = Color.blue
     @State private var outcome: Bool = true  // Boolean for Yes/No selection
@@ -276,24 +276,146 @@ struct MarketChartView: View {
 }
 
 struct MarketOrderBookView: View {
-    @State private var selectedOption: String = "Yes" // Default selection
+    @State private var selectedOption: String = "Yes" // Picker selection
+    
+    // Dummy data
+    let yesAsk: [(price: Double, quantity: Double, total: Double)] = [
+        (0.99, 100, 99),
+        (0.75, 50, 87.5),
+        (0.51, 30, 45.3)
+    ]
+    let yesBid: [(price: Double, quantity: Double, total: Double)] = [
+        (0.44, 100, 44),
+        (0.25, 50, 87.5),
+        (0.51, 30, 45.3)
+    ]
+    let noAsk: [(price: Double, quantity: Double, total: Double)] = [
+        (0.99, 100, 999),
+        (0.75, 50, 87.5),
+        (0.51, 30, 45.3)
+    ]
+    let noBid: [(price: Double, quantity: Double, total: Double)] = [
+        (0.99, 100, 999),
+        (0.75, 50, 87.5),
+        (0.51, 30, 45.3)
+    ]
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Trade")
-                .font(.system(size: 14))
-                .foregroundColor(.gray)
-                .lineLimit(1)
+            // Header Row (Trade, Price, Shares, Total)
+            HStack {
+                Text("Trade")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text("Price")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                Text("Shares")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                Text("Total")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            .padding(.bottom, 4)
             
-            Text("Selected: \(selectedOption)")
-                .font(.headline)
-                .padding(.top, 10)
+            // Asks Section
+            HStack {
+                Text("Asks")
+                    .font(.system(size: 14))
+                    .foregroundColor(.red)
+                    .lineLimit(1)
+            }
+            ForEach(selectedOption == "Yes" ? yesAsk : noAsk, id: \.price) { ask in
+                HStack {
+                    Text("")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: 40, alignment: .leading)
+                    Text(String(format: "$%.2f", ask.price))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    Text(String(format: "%.0f", ask.quantity))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    Text(String(format: "$%.2f", ask.total))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.bottom, 4)
+            }
             
+            Divider()
+                .padding(.vertical, 2)
+            
+            // Last and Spread Section
+            HStack {
+                HStack {
+                    Text("Last:")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                    Text("39¢")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                HStack {
+                    Text("Spread:")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
+                    Text("1.0¢")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            Divider()
+                .padding(.vertical, 2)
+            
+            // Bids Section
+            HStack {
+                Text("Bids")
+                    .font(.system(size: 14))
+                    .foregroundColor(.green)
+                    .lineLimit(1)
+            }
+            ForEach(selectedOption == "Yes" ? yesBid : noBid, id: \.price) { bid in
+                HStack {
+                    Text("")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: 40, alignment: .leading)
+                    Text(String(format: "$%.2f", bid.price))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    Text(String(format: "%.0f", bid.quantity))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    Text(String(format: "$%.2f", bid.total))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.bottom, 4)
+            }
+            
+            // Picker for selection between "Yes" and "No"
             Picker("Select an option", selection: $selectedOption) {
                 Text("Yes").tag("Yes")
                 Text("No").tag("No")
             }
             .pickerStyle(SegmentedPickerStyle())
+            .padding(.top, 12)
         }
         .padding()
         .background(Color.gray.opacity(0.1))
