@@ -225,47 +225,19 @@ struct MarketInfoView: View {
 
 struct MarketChartView: View {
     let yesData: [Double] = [10, 20, 15, 30, 25, 40, 35, 100]
-    let noData: [Double] = [100, 80, 15, 70, 25, 70, 35, 0]
+    let noData: [Double] = [70, 80, 15, 70, 25, 70, 35, 0]
     let yesColor: Color = Color.red
     let noColor: Color = Color.blue
-    @State private var outcome: Bool = true
-    
+    @State private var outcome: Bool = true  // Boolean for Yes/No selection
     
     var body: some View {
-        VStack {
-            HStack() {
-                HStack {
-                    // VStack aligned to leading
-                    VStack(alignment: .leading) {
-                        Text(outcome ? "Yes" : "No")
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
-                            .lineLimit(1)
-                        Text(outcome ? "91% Chance" : "9% Chance")
-                            .font(.headline)
-                            .foregroundColor(outcome ? yesColor : noColor)
-                            .lineLimit(1)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading) // Align the VStack to leading edge
-                    
-                    // HStack aligned to trailing
-                    HStack {
-                        Button(action: { self.outcome = true }) {
-                            Text("Yes")
-                                .bold()
-                                .foregroundColor(Color(red: 18/255, green: 197/255, blue: 208/255))
-                        }
-                        Button(action: { self.outcome = false }) {
-                            Text("No")
-                                .bold()
-                                .foregroundColor(Color(red: 18/255, green: 197/255, blue: 208/255))
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .bottomTrailing)
-                }
-                .padding(.bottom, 8)
-            }
-            
+        VStack(alignment: .leading) {
+            Text(outcome ? "91% Chance" : "9% Chance")
+                .font(.headline)
+                .foregroundColor(outcome ? yesColor : noColor)
+                .lineLimit(1)
+                .padding(.bottom, 4)
+
             Chart {
                 let data = outcome ? yesData : noData
                 
@@ -277,6 +249,7 @@ struct MarketChartView: View {
                     .foregroundStyle(outcome ? yesColor : noColor)
                 }
             }
+            .chartYScale(domain: 0...100)
             .chartXAxis {
                 AxisMarks { _ in
                     AxisValueLabel()
@@ -285,9 +258,15 @@ struct MarketChartView: View {
             .chartYAxis {
                 AxisMarks { _ in
                     AxisValueLabel()
-                        .foregroundStyle(Color(red: 18/255, green: 197/255, blue: 208/255))
                 }
             }
+            .padding(.bottom, 12)
+            
+            Picker("Select an option", selection: $outcome) {
+                Text("Yes").tag(true)
+                Text("No").tag(false)
+            }
+            .pickerStyle(SegmentedPickerStyle())
         }
         .padding()
         .frame(height: 300)
@@ -297,30 +276,106 @@ struct MarketChartView: View {
 }
 
 struct MarketOrderBookView: View {
+    @State private var selectedOption: String = "Yes" // Default selection
+    
     var body: some View {
-        Text("Order Book View")
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding()
+        VStack(alignment: .leading) {
+            Text("Trade")
+                .font(.system(size: 14))
+                .foregroundColor(.gray)
+                .lineLimit(1)
+            
+            Text("Selected: \(selectedOption)")
+                .font(.headline)
+                .padding(.top, 10)
+            
+            Picker("Select an option", selection: $selectedOption) {
+                Text("Yes").tag("Yes")
+                Text("No").tag("No")
+            }
+            .pickerStyle(SegmentedPickerStyle())
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
 struct MarketRulesView: View {
+    @State private var showFullText: Bool = false  // Controls text expansion
+
+    private let fullText = """
+    This market will resolve to "Yes" if any one-minute Binance candle for Algorand (ALGOUSDT) between March 2, 2025, at 11:55 AM EST and March 7, 2025, at 23:59 ET records a final "High" price of $0.32 or more. Otherwise, it will resolve to "No."
+    
+    The resolution source is Binance, specifically the ALGOUSDT "High" prices available at https://www.binance.com/en/trade/ALGO_USDT?type=spot, with the chart set to "1m" for one-minute candles. Only price data from Binance’s ALGOUSDT trading pair will be considered.
+    
+    Prices from other exchanges, different trading pairs, or spot markets will not affect this market’s resolution.
+    """
+
     var body: some View {
-        Text("Rules View")
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+        VStack(alignment: .leading) {
+            // Title
+            Text("Rules")
+                .font(.system(size: 14))
+                .foregroundColor(.gray)
+                .lineLimit(1)
+
+            // Expandable Text
+            Text(fullText)
+                .font(.system(size: 14)) // Paragraph font size
+                .lineLimit(showFullText ? nil : 3) // Show 3 lines before truncation
+                .padding(.top, 2)
+                .animation(.easeInOut, value: showFullText)
+
+            // Show More / Show Less Button
+            Button(action: { showFullText.toggle() }) {
+                Text(showFullText ? "Show Less" : "Show More")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.blue)
+            }
+            .padding(.top, 4)
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
+
 struct MarketCommentsView: View {
+    // Dummy data: list of (username, comment)
+    let comments: [(username: String, comment: String)] = [
+        ("CryptoTrader69.algo", "I think this market is undervaluing the chance of a breakout! 🚀"),
+        ("AlgoFan23.algo", "Binance data is solid, but keep an eye on the order book.")
+    ]
+
     var body: some View {
-        Text("Comments View")
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+        VStack(alignment: .leading) {
+            // Title
+            Text("Comments")
+                .font(.system(size: 14))
+                .foregroundColor(.gray)
+                .lineLimit(1)
+
+            // Comments List
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(comments, id: \.username) { comment in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(comment.username)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(Color.gray)
+
+                        Text(comment.comment)
+                            .font(.system(size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
