@@ -195,13 +195,13 @@ struct MarketTitleView: View {
             }
 
             Text(title ?? "Unknown Market")
+                .padding(.leading, 4)
                 .font(.headline)
                 .multilineTextAlignment(.leading)
                 .lineLimit(nil)
                 .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal)
     }
 }
 
@@ -212,36 +212,80 @@ struct MarketInfoView: View {
             GridItem(.flexible(), spacing: 16),
             GridItem(.flexible(), spacing: 16)
         ], alignment: .leading, spacing: 16) {
-            InfoItem(title: "Volume", value: "1000")
-            InfoItem(title: "Market Volume", value: "5000")
+            InfoItem(title: "Volume", value: "$1000")
+            InfoItem(title: "Market Volume", value: "$5000")
             InfoItem(title: "Fees", value: "$10")
             InfoItem(title: "Date", value: "2025-03-06")
         }
         .padding()
         .background(Color.gray.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .padding()
     }
 }
 
 struct MarketChartView: View {
-    let data: [Double] = [10, 20, 15, 30, 25, 40, 35]
+    let yesData: [Double] = [10, 20, 15, 30, 25, 40, 35, 100]
+    let noData: [Double] = [100, 80, 15, 70, 25, 70, 35, 0]
+    let yesColor: Color = Color.red
+    let noColor: Color = Color.blue
+    @State private var outcome: Bool = true
+    
     
     var body: some View {
         VStack {
-            Text("Chart")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.system(size: 16))
-                .foregroundColor(.gray)
-                .lineLimit(1)
-            // Line chart using LinePlot
+            HStack() {
+                HStack {
+                    // VStack aligned to leading
+                    VStack(alignment: .leading) {
+                        Text(outcome ? "Yes" : "No")
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                        Text(outcome ? "91% Chance" : "9% Chance")
+                            .font(.headline)
+                            .foregroundColor(outcome ? yesColor : noColor)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading) // Align the VStack to leading edge
+                    
+                    // HStack aligned to trailing
+                    HStack {
+                        Button(action: { self.outcome = true }) {
+                            Text("Yes")
+                                .bold()
+                                .foregroundColor(Color(red: 18/255, green: 197/255, blue: 208/255))
+                        }
+                        Button(action: { self.outcome = false }) {
+                            Text("No")
+                                .bold()
+                                .foregroundColor(Color(red: 18/255, green: 197/255, blue: 208/255))
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .bottomTrailing)
+                }
+                .padding(.bottom, 8)
+            }
+            
             Chart {
+                let data = outcome ? yesData : noData
+                
                 ForEach(data.indices, id: \.self) { index in
                     LineMark(
                         x: .value("Index", index),
                         y: .value("Value", data[index])
                     )
-                    .foregroundStyle(Color.blue)
+                    .foregroundStyle(outcome ? yesColor : noColor)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                }
+            }
+            .chartYAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(Color(red: 18/255, green: 197/255, blue: 208/255))
                 }
             }
         }
@@ -268,7 +312,6 @@ struct MarketRulesView: View {
             .padding()
             .background(Color.gray.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding()
     }
 }
 
@@ -278,7 +321,6 @@ struct MarketCommentsView: View {
             .padding()
             .background(Color.gray.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding()
     }
 }
 
