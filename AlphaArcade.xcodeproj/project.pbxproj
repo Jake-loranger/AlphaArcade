@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A16D52262D7E911400730BE1 /* Market.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52252D7E911400730BE1 /* Market.swift */; };
+		A16D522A2D7E91DF00730BE1 /* MarketDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52292D7E91DF00730BE1 /* MarketDetails.swift */; };
+		A16D522C2D80F54B00730BE1 /* ProflieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D522B2D80F54B00730BE1 /* ProflieView.swift */; };
+		A16D522E2D80F58800730BE1 /* MarketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D522D2D80F58800730BE1 /* MarketView.swift */; };
+		A16D52302D80F5F600730BE1 /* MarketDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D522F2D80F5F600730BE1 /* MarketDetailView.swift */; };
+		A16D52322D80F68B00730BE1 /* OrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52312D80F68B00730BE1 /* OrderView.swift */; };
 		A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */; };
 		A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682D2D7A5C910014FF4B /* MainView.swift */; };
 		A1F868302D7A5C990014FF4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F8682F2D7A5C990014FF4B /* Assets.xcassets */; };
@@ -34,6 +40,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A16D52252D7E911400730BE1 /* Market.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Market.swift; sourceTree = "<group>"; };
+		A16D52292D7E91DF00730BE1 /* MarketDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDetails.swift; sourceTree = "<group>"; };
+		A16D522B2D80F54B00730BE1 /* ProflieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProflieView.swift; sourceTree = "<group>"; };
+		A16D522D2D80F58800730BE1 /* MarketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketView.swift; sourceTree = "<group>"; };
+		A16D522F2D80F5F600730BE1 /* MarketDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDetailView.swift; sourceTree = "<group>"; };
+		A16D52312D80F68B00730BE1 /* OrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderView.swift; sourceTree = "<group>"; };
 		A1F868282D7A5C910014FF4B /* AlphaArcade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaArcade.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeApp.swift; sourceTree = "<group>"; };
 		A1F8682D2D7A5C910014FF4B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -71,6 +83,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A16D52242D7E90D400730BE1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A16D52252D7E911400730BE1 /* Market.swift */,
+				A16D52292D7E91DF00730BE1 /* MarketDetails.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A16D52282D7E918D00730BE1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A16D522B2D80F54B00730BE1 /* ProflieView.swift */,
+				A16D522D2D80F58800730BE1 /* MarketView.swift */,
+				A16D522F2D80F5F600730BE1 /* MarketDetailView.swift */,
+				A16D52312D80F68B00730BE1 /* OrderView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		A1F8681F2D7A5C910014FF4B = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +126,8 @@
 		A1F8682A2D7A5C910014FF4B /* AlphaArcade */ = {
 			isa = PBXGroup;
 			children = (
+				A16D52282D7E918D00730BE1 /* Views */,
+				A16D52242D7E90D400730BE1 /* Models */,
 				A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */,
 				A1F8682D2D7A5C910014FF4B /* MainView.swift */,
 				A1F8682F2D7A5C990014FF4B /* Assets.xcassets */,
@@ -257,8 +291,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A16D52302D80F5F600730BE1 /* MarketDetailView.swift in Sources */,
+				A16D52322D80F68B00730BE1 /* OrderView.swift in Sources */,
+				A16D522A2D7E91DF00730BE1 /* MarketDetails.swift in Sources */,
 				A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */,
+				A16D522E2D80F58800730BE1 /* MarketView.swift in Sources */,
 				A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */,
+				A16D52262D7E911400730BE1 /* Market.swift in Sources */,
+				A16D522C2D80F54B00730BE1 /* ProflieView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,7 +387,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -404,7 +444,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -422,6 +462,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"AlphaArcade/Preview Content\"";
+				DEVELOPMENT_TEAM = 4C7H6LPRHA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -450,6 +491,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"AlphaArcade/Preview Content\"";
+				DEVELOPMENT_TEAM = 4C7H6LPRHA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
