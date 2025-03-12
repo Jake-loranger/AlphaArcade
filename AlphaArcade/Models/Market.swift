@@ -37,3 +37,13 @@ struct Match: Codable {
     let price: Int?
     let marketId: String?
 }
+
+struct Comments: Codable {
+    let comments: [Comment]
+}
+
+struct Comment: Codable {
+    let text: String?
+    let senderWallet: String?
+    let updatedAt: Int?
+}

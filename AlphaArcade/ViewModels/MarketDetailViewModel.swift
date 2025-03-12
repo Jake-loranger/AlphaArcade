@@ -2,6 +2,7 @@ import Foundation
 
 class MarketDetailViewModel: ObservableObject {
     @Published var marketDetails: MarketDetail?
+    @Published var marketComments: [Comment]?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     
@@ -42,6 +43,52 @@ class MarketDetailViewModel: ObservableObject {
                 
                 DispatchQueue.main.async {
                     self.marketDetails = marketDetail
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
+                }
+            }
+        }
+        
+        task.resume()
+    }
+    
+    func fetchComments(marketId: String) {
+        isLoading = true
+        
+        let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-comments?marketId=\(marketId)"
+        guard let url = URL(string: urlString) else {
+            errorMessage = "Invalid URL"
+            isLoading = false
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+            
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Error fetching data: \(error.localizedDescription)"
+                }
+                return
+            }
+            
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    self.errorMessage = "No data received"
+                }
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(Comments.self, from: data)
+                
+                DispatchQueue.main.async {
+                    self.marketComments = response.comments
                 }
             } catch {
                 DispatchQueue.main.async {

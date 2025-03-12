@@ -18,7 +18,7 @@ struct MarketDetailView: View {
         VStack {
             if viewModel.isLoading {
                 ProgressView()
-            } else if viewModel.marketDetails != nil {
+            } else if viewModel.marketDetails != nil && viewModel.marketComments != nil {
                 ScrollView {
                     VStack(alignment: .leading) {
                         MarketTitleView(title: market.title, image: market.image)
@@ -26,7 +26,7 @@ struct MarketDetailView: View {
                         MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAt)
                         MarketOrderBookView()
                         MarketRulesView(market: market)
-                        MarketCommentsView()
+                        MarketCommentsView(marketComments: viewModel.marketComments ?? nil)
                     }
                     .padding()
                 }
@@ -43,15 +43,7 @@ struct MarketDetailView: View {
         }
         .onAppear {
             viewModel.fetchMarketDetails(marketId: market.id ?? "")
-            
-            // Print the market details once the data is loaded
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            if let details = viewModel.marketDetails {
-                                print("Market Details:", details)
-                            } else if let error = viewModel.errorMessage {
-                                print("Error Fetching Market Details:", error)
-                            }
-                        }
+            viewModel.fetchComments(marketId: market.id ?? "")
         }
         .sheet(isPresented: $showOrderView) {
             if let option = selectedOption {
@@ -103,7 +95,6 @@ struct MarketTitleView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-
 struct MarketInfoView: View {
     let volume: Double?
     let marketVolume: Double?
@@ -111,19 +102,24 @@ struct MarketInfoView: View {
     let date: Date?
     
     var body: some View {
-        // Use LazyVGrid for better handling of content
         LazyVGrid(columns: [
             GridItem(.flexible(), spacing: 16),
             GridItem(.flexible(), spacing: 16)
         ], alignment: .leading, spacing: 16) {
-            InfoItem(title: "Volume", value: "$\(volume ?? 0)")  // Corrected string interpolation
-            InfoItem(title: "Market Volume", value: "$\(marketVolume ?? 0)")  // Corrected string interpolation
-            InfoItem(title: "Fees", value: "$\(fees ?? 0)")  // Corrected string interpolation
-            InfoItem(title: "Date", value: formattedDate(date))  // Formatted date
+            InfoItem(title: "Volume", value: formattedNumber(volume))
+            InfoItem(title: "Market Volume", value: formattedNumber(marketVolume))
+            InfoItem(title: "Fees", value: formattedNumber(fees))
+            InfoItem(title: "Date", value: formattedDate(date))
         }
         .padding()
         .background(Color.gray.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+    
+    // Helper function to format numbers
+    func formattedNumber(_ value: Double?) -> String {
+        guard let value = value else { return "N/A" }
+        return String(format: "$%.2f", value / 1_000_000) // Formats as millions with 2 decimal places
     }
     
     // Helper function to format the date
@@ -371,11 +367,7 @@ struct MarketRulesView: View {
 
 
 struct MarketCommentsView: View {
-    // Dummy data: list of (username, comment)
-    let comments: [(username: String, comment: String)] = [
-        ("CryptoTrader69.algo", "I think this market is undervaluing the chance of a breakout! 🚀"),
-        ("AlgoFan23.algo", "Binance data is solid, but keep an eye on the order book.")
-    ]
+    @State var marketComments: [Comment]?
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -387,13 +379,13 @@ struct MarketCommentsView: View {
 
             // Comments List
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(comments, id: \.username) { comment in
+                ForEach(marketComments!, id: \.senderWallet) { comment in
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(comment.username)
+                        Text(comment.senderWallet ?? "--")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(Color.gray)
 
-                        Text(comment.comment)
+                        Text(comment.text ?? "--")
                             .font(.system(size: 14))
                             .foregroundColor(.white)
                     }
