@@ -10,21 +10,28 @@ import Charts
 
 struct MarketDetailView: View {
     let market: Market
+    @StateObject private var viewModel = MarketDetailViewModel()
     @State private var showOrderView = false
     @State private var selectedOption: String? = "yes"
 
     var body: some View {
         VStack {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    MarketTitleView(title: market.title, image: market.image)
-                    MarketInfoView()
-                    MarketChartView()
-                    MarketOrderBookView()
-                    MarketRulesView()
-                    MarketCommentsView()
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.marketDetails != nil {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        MarketTitleView(title: market.title, image: market.image)
+                        MarketChartView()
+                        MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAt)
+                        MarketOrderBookView()
+                        MarketRulesView(market: market)
+                        MarketCommentsView()
+                    }
+                    .padding()
                 }
-                .padding()
+            } else if let error = viewModel.errorMessage {
+                Text(error).foregroundColor(.red)
             }
             
             OrderButtonsView { option in
@@ -34,20 +41,27 @@ struct MarketDetailView: View {
                 }
             }
         }
-        .onChange(of: selectedOption) { newValue in
-            if newValue != nil {
-                showOrderView = true
-            }
+        .onAppear {
+            viewModel.fetchMarketDetails(marketId: market.id ?? "")
+            
+            // Print the market details once the data is loaded
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            if let details = viewModel.marketDetails {
+                                print("Market Details:", details)
+                            } else if let error = viewModel.errorMessage {
+                                print("Error Fetching Market Details:", error)
+                            }
+                        }
         }
         .sheet(isPresented: $showOrderView) {
             if let option = selectedOption {
                 OrderView(option: option)
-                    .presentationDetents([.medium, .large]) // Move here
-//                    .id(option)  Ensures re-rendering on option change
+                    .presentationDetents([.medium, .large])
             }
         }
     }
 }
+
 
 
 struct MarketTitleView: View {
@@ -91,20 +105,34 @@ struct MarketTitleView: View {
 }
 
 struct MarketInfoView: View {
+    let volume: Double?
+    let marketVolume: Double?
+    let fees: Double?
+    let date: Date?
+    
     var body: some View {
         // Use LazyVGrid for better handling of content
         LazyVGrid(columns: [
             GridItem(.flexible(), spacing: 16),
             GridItem(.flexible(), spacing: 16)
         ], alignment: .leading, spacing: 16) {
-            InfoItem(title: "Volume", value: "$1000")
-            InfoItem(title: "Market Volume", value: "$5000")
-            InfoItem(title: "Fees", value: "$10")
-            InfoItem(title: "Date", value: "2025-03-06")
+            InfoItem(title: "Volume", value: "$\(volume ?? 0)")  // Corrected string interpolation
+            InfoItem(title: "Market Volume", value: "$\(marketVolume ?? 0)")  // Corrected string interpolation
+            InfoItem(title: "Fees", value: "$\(fees ?? 0)")  // Corrected string interpolation
+            InfoItem(title: "Date", value: formattedDate(date))  // Formatted date
         }
         .padding()
         .background(Color.gray.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+    
+    // Helper function to format the date
+    func formattedDate(_ date: Date?) -> String {
+        guard let date = date else { return "N/A" }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
     }
 }
 
@@ -309,15 +337,8 @@ struct MarketOrderBookView: View {
 }
 
 struct MarketRulesView: View {
-    @State private var showFullText: Bool = false  // Controls text expansion
-
-    private let fullText = """
-    This market will resolve to "Yes" if any one-minute Binance candle for Algorand (ALGOUSDT) between March 2, 2025, at 11:55 AM EST and March 7, 2025, at 23:59 ET records a final "High" price of $0.32 or more. Otherwise, it will resolve to "No."
-    
-    The resolution source is Binance, specifically the ALGOUSDT "High" prices available at https://www.binance.com/en/trade/ALGO_USDT?type=spot, with the chart set to "1m" for one-minute candles. Only price data from Binance’s ALGOUSDT trading pair will be considered.
-    
-    Prices from other exchanges, different trading pairs, or spot markets will not affect this market’s resolution.
-    """
+    @State var market: Market
+    @State private var showFullText: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -328,7 +349,7 @@ struct MarketRulesView: View {
                 .lineLimit(1)
 
             // Expandable Text
-            Text(fullText)
+            Text(market.rules ?? "Cannot recieve rules at this moment")
                 .font(.system(size: 14)) // Paragraph font size
                 .lineLimit(showFullText ? nil : 3) // Show 3 lines before truncation
                 .padding(.top, 2)

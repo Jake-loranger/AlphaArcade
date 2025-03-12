@@ -70,8 +70,13 @@ struct MarketView: View {
 
         do {
             let (data, _) = try await URLSession.shared.data(from: apiURL)
+            
+//            if let jsonString = String(data: data, encoding: .utf8) {
+//                print("Raw Response JSON:", jsonString)
+//            }
+//            
             let decodedResponse = try JSONDecoder().decode(MarketResponse.self, from: data)
-
+            
             DispatchQueue.main.async {
                 self.activeMarkets = decodedResponse.markets.filter { $0.resolution == nil && $0.title != nil }
                 self.resolvedMarkets = decodedResponse.markets.filter { $0.resolution != nil && $0.title != nil }
