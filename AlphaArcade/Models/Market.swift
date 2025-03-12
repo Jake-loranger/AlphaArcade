@@ -26,8 +26,13 @@ struct Market: Identifiable, Codable {
     let volume: Double?
     let marketVolume: Double?
     let fees: Double?
-    let createdAt: Date?
+    let createdAt: Int?
     let rules: String?
+    
+    var createdAtDate: Date? {
+        guard let timestamp = createdAt else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(timestamp) / 1000)
+    }
 }
 
 struct Match: Codable {

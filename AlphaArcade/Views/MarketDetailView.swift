@@ -23,7 +23,7 @@ struct MarketDetailView: View {
                     VStack(alignment: .leading) {
                         MarketTitleView(title: market.title, image: market.image)
                         MarketChartView()
-                        MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAt)
+                        MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
                         MarketOrderBookView()
                         MarketRulesView(market: market)
                         MarketCommentsView(marketComments: viewModel.marketComments ?? nil)
@@ -95,6 +95,7 @@ struct MarketTitleView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
+
 struct MarketInfoView: View {
     let volume: Double?
     let marketVolume: Double?
@@ -122,12 +123,10 @@ struct MarketInfoView: View {
         return String(format: "$%.2f", value / 1_000_000) // Formats as millions with 2 decimal places
     }
     
-    // Helper function to format the date
     func formattedDate(_ date: Date?) -> String {
         guard let date = date else { return "N/A" }
         let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
+        formatter.dateFormat = "yyyy-MM-dd" // Ensures output like "2025-07-01"
         return formatter.string(from: date)
     }
 }
