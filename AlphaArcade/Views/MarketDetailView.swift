@@ -24,7 +24,8 @@ struct MarketDetailView: View {
                         MarketTitleView(title: market.title, image: market.image)
                         MarketChartView()
                         MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
-                        MarketOrderBookView()
+                        MarketOrderBookView(orderbook: viewModel.marketOrderbook ?? nil)
+
                         MarketRulesView(market: market)
                         MarketCommentsView(marketComments: viewModel.marketComments ?? nil)
                     }
@@ -44,6 +45,7 @@ struct MarketDetailView: View {
         .onAppear {
             viewModel.fetchMarketDetails(marketId: market.id ?? "")
             viewModel.fetchComments(marketId: market.id ?? "")
+            viewModel.fetchOrderbook(marketId: market.id ?? "")
         }
         .sheet(isPresented: $showOrderView) {
             if let option = selectedOption {
@@ -184,160 +186,104 @@ struct MarketChartView: View {
 }
 
 struct MarketOrderBookView: View {
-    @State private var selectedOption: String = "Yes" // Picker selection
+    let orderbook: OrderBook?
+    @State private var selectedOption: String = "Yes"
 
     let columns: [GridItem] = [
-        GridItem(.fixed(50), alignment: .leading),  // Asks/Bids column (Fixed width)
-        GridItem(.flexible(), alignment: .trailing), // Price
-        GridItem(.flexible(), alignment: .trailing), // Shares
-        GridItem(.flexible(), alignment: .trailing)  // Total
-    ]
-
-    // Dummy data
-    let yesAsk: [(price: Double, quantity: Double, total: Double)] = [
-        (0.99, 100, 99),
-        (0.75, 50, 87.5),
-        (0.51, 30, 45.3)
-    ]
-    let yesBid: [(price: Double, quantity: Double, total: Double)] = [
-        (0.44, 100, 44),
-        (0.25, 50, 87.5),
-        (0.51, 30, 45.3)
-    ]
-    let noAsk: [(price: Double, quantity: Double, total: Double)] = [
-        (0.99, 100, 999),
-        (0.75, 50, 87.5),
-        (0.51, 30, 45.3)
-    ]
-    let noBid: [(price: Double, quantity: Double, total: Double)] = [
-        (0.99, 100, 999),
-        (0.75, 50, 87.5),
-        (0.51, 30, 45.3)
+        GridItem(.fixed(50), alignment: .leading),
+        GridItem(.flexible(), alignment: .trailing),
+        GridItem(.flexible(), alignment: .trailing),
+        GridItem(.flexible(), alignment: .trailing)
     ]
 
     var body: some View {
         VStack(alignment: .leading) {
-            // Header Row
-            LazyVGrid(columns: columns, spacing: 4) {
-                Text("Trade")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-
-                Text("Price")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-
-                Text("Shares")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-
-                Text("Total")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-            }
-            .padding(.bottom, 4)
-            
-            HStack {
-                Text("Asks")
-                    .font(.system(size: 14))
-                    .foregroundColor(.red)
-                    .lineLimit(1)
-            }
-            .padding(.vertical, 1)
-
-            // Ask Orders
-            LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(selectedOption == "Yes" ? yesAsk : noAsk, id: \.price) { ask in
-                    Text("") // Empty column to align rows properly
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-
-                    Text(String(format: "$%.2f", ask.price))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
-
-                    Text(String(format: "%.0f", ask.quantity))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
-
-                    Text(String(format: "$%.2f", ask.total))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
+            if let marketData = orderbook {
+                LazyVGrid(columns: columns, spacing: 4) {
+                    Text("Trade").font(.system(size: 14)).foregroundColor(.gray)
+                    Text("Price").font(.system(size: 14)).foregroundColor(.gray)
+                    Text("Shares").font(.system(size: 14)).foregroundColor(.gray)
+                    Text("Total").font(.system(size: 14)).foregroundColor(.gray)
                 }
-                .padding(.vertical, 4)
-            }
-            
-            Divider()
-                .padding(.vertical, 2)
+                .padding(.bottom, 4)
 
-            // Last and Spread Section
-            HStack {
-                HStack {
-                    Text("Last:")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                    Text("39¢")
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                OrderSectionView(
+                    title: "Asks",
+                    orders: selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks,
+                    color: Color.red
+                )
+                Divider().padding(.vertical, 2)
 
                 HStack {
-                    Text("Spread:")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                    Text("1.0¢")
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
+                    Text("Last: ").foregroundColor(.gray)
+                    Text("N/A").foregroundColor(.white) // Placeholder, update with real data
+                    Spacer()
+                    Text("Spread: ").foregroundColor(.gray)
+                    Text("N/A").foregroundColor(.white) // Placeholder
                 }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-
-            Divider()
+                .font(.system(size: 12))
                 .padding(.vertical, 2)
 
-            // Bids Header
-            HStack {
-                Text("Bids")
-                    .font(.system(size: 14))
-                    .foregroundColor(.green)
-                    .lineLimit(1)
-            }
-            .padding(.vertical, 1)
+                Divider().padding(.vertical, 2)
+                OrderSectionView(
+                    title: "Bids",
+                    orders: selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids,
+                    color: Color.green
+                )
 
-            // Bids Section
-            LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(selectedOption == "Yes" ? yesBid : noBid, id: \.price) { bid in
-                    Text("") // Empty column for alignment
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-
-                    Text(String(format: "$%.2f", bid.price))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
-
-                    Text(String(format: "%.0f", bid.quantity))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
-
-                    Text(String(format: "$%.2f", bid.total))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white)
+                Picker("Select an option", selection: $selectedOption) {
+                    Text("Yes").tag("Yes")
+                    Text("No").tag("No")
                 }
-                .padding(.vertical, 4)
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.top, 12)
+            } else {
+                ProgressView("Loading Orderbook...")
+                    .padding()
             }
-
-            // Picker for selection between "Yes" and "No"
-            Picker("Select an option", selection: $selectedOption) {
-                Text("Yes").tag("Yes")
-                Text("No").tag("No")
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.top, 12)
         }
         .padding()
         .background(Color.gray.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+
+struct OrderSectionView: View {
+    let title: String
+    let orders: [Order]
+    let color: Color
+
+    let columns: [GridItem] = [
+        GridItem(.fixed(50), alignment: .leading),
+        GridItem(.flexible(), alignment: .trailing),
+        GridItem(.flexible(), alignment: .trailing),
+        GridItem(.flexible(), alignment: .trailing)
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.system(size: 14))
+                .foregroundColor(color)
+                .padding(.bottom, 1)
+
+            LazyVGrid(columns: columns, spacing: 4) {
+                ForEach(orders, id: \.price) { order in
+                    Text("") // Empty column for alignment
+                    Text(String(format: "$%.2f", Double(order.price) / 1000000.0))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                    Text(String(format: "%.2f", Double(order.quantity) / 1000000.0))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                    Text(String(format: "$%.2f", Double(order.total) / 1000000000000.0))
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                }
+                .padding(.vertical, 4)
+            }
+        }
     }
 }
 

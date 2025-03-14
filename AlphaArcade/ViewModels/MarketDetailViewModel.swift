@@ -5,6 +5,7 @@ class MarketDetailViewModel: ObservableObject {
     @Published var marketComments: [Comment]?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
+    @Published var marketOrderbook: OrderBook?
     
     func fetchMarketDetails(marketId: String) {
         isLoading = true
@@ -99,4 +100,58 @@ class MarketDetailViewModel: ObservableObject {
         
         task.resume()
     }
+    
+    func fetchOrderbook(marketId: String) {
+            isLoading = true
+            let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-full-orderbook?marketId=\(marketId)"
+
+            guard let url = URL(string: urlString) else {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Invalid URL"
+                    self.isLoading = false
+                }
+                return
+            }
+
+            let task = URLSession.shared.dataTask(with: url) { data, _, error in
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                }
+
+                if let error = error {
+                    DispatchQueue.main.async {
+                        self.errorMessage = "Error fetching data: \(error.localizedDescription)"
+                    }
+                    return
+                }
+
+                guard let data = data else {
+                    DispatchQueue.main.async {
+                        self.errorMessage = "No data received"
+                    }
+                    return
+                }
+                
+                if let jsonString = String(data: data, encoding: .utf8) {
+                            print("Raw JSON data: \(jsonString)")
+                        }
+
+                do {
+                    let decoder = JSONDecoder()
+                    let decodedData = try decoder.decode([String: OrderBook].self, from: data)
+
+                    if let firstOrderbook = decodedData.first?.value {
+                         DispatchQueue.main.async {
+                             self.marketOrderbook = firstOrderbook
+                         }
+                     }
+                } catch {
+                    DispatchQueue.main.async {
+                        self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
+                    }
+                }
+            }
+
+            task.resume()
+        }
 }
