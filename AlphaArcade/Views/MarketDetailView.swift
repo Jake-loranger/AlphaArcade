@@ -22,7 +22,7 @@ struct MarketDetailView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         MarketTitleView(title: market.title, image: market.image)
-                        MarketChartView()
+                        MarketChartView(yesProb: viewModel.marketDetails?.market.yesProb, noProb: viewModel.marketDetails?.market.noProb)
                         MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
                         MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: viewModel.marketDetails?.market)
 
@@ -134,30 +134,49 @@ struct MarketInfoView: View {
 }
 
 struct MarketChartView: View {
+    var yesProb: Double?
+    var noProb: Double?
     let yesData: [Double] = [10, 20, 15, 30, 25, 40, 35, 91]
     let noData: [Double] = [90, 80, 85, 70, 75, 60, 65, 9]
-    let yesColor: Color = Color.red
-    let noColor: Color = Color.blue
-    @State private var outcome: Bool = true  // Boolean for Yes/No selection
     
+    // Structure the data similarly to the LineChartExampleView
+    var data: [(type: String, values: [Double])] {
+        [
+            (type: "Yes", values: yesData),
+            (type: "No", values: noData)
+        ]
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
-            Text(outcome ? "91% Chance" : "9% Chance")
-                .font(.headline)
-                .foregroundColor(outcome ? yesColor : noColor)
-                .lineLimit(1)
-                .padding(.bottom, 4)
-
-            Chart {
-                let data = outcome ? yesData : noData
-                
-                ForEach(data.indices, id: \.self) { index in
+            HStack {
+                Text("No")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                Text(noProb != nil ? "\(noProb! / 10000, specifier: "%.1f")%" : "-")
+                    .font(.system(size: 16, weight: .bold))
+                    .lineLimit(1)
+                    .padding(.trailing, 6)
+                Text("Yes")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                Text(yesProb != nil ? "\(yesProb! / 10000, specifier: "%.1f")%" : "-")
+                    .font(.system(size: 16, weight: .bold))
+                    .lineLimit(1)
+            }
+            
+            Chart(data, id: \.type) { dataSeries in
+                ForEach(dataSeries.values.indices, id: \.self) { index in
                     LineMark(
                         x: .value("Index", index),
-                        y: .value("Value", data[index])
+                        y: .value("Value", dataSeries.values[index])
                     )
-                    .foregroundStyle(outcome ? yesColor : noColor)
                 }
+                .foregroundStyle(by: .value("Type", dataSeries.type))
+                .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                .opacity(0.8)
             }
             .chartYScale(domain: 0...100)
             .chartXAxis {
@@ -170,13 +189,11 @@ struct MarketChartView: View {
                     AxisValueLabel()
                 }
             }
-            .padding(.bottom, 12)
+            .chartLegend(position: .bottom, spacing: 10)
+            .padding(.vertical, 6)
             
-            Picker("Select an option", selection: $outcome) {
-                Text("Yes").tag(true)
-                Text("No").tag(false)
-            }
-            .pickerStyle(SegmentedPickerStyle())
+            
+            
         }
         .padding()
         .frame(height: 300)
