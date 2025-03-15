@@ -22,7 +22,7 @@ struct MarketDetailView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         MarketTitleView(title: market.title, image: market.image)
-                        MarketChartView(yesProb: viewModel.marketDetails?.market.yesProb, noProb: viewModel.marketDetails?.market.noProb)
+                        MarketChartView(matches: viewModel.marketDetails?.matches ,yesProb: viewModel.marketDetails?.market.yesProb, noProb: viewModel.marketDetails?.market.noProb)
                         MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
                         MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: viewModel.marketDetails?.market)
 
@@ -134,12 +134,26 @@ struct MarketInfoView: View {
 }
 
 struct MarketChartView: View {
+    var matches: [Match]?
     var yesProb: Double?
     var noProb: Double?
-    let yesData: [Double] = [10, 20, 15, 30, 25, 40, 35, 91]
-    let noData: [Double] = [90, 80, 85, 70, 75, 60, 65, 9]
+
+    // Create the Yes and No price data arrays
+    var yesData: [Double] {
+        matches?.compactMap { match in
+            guard let price = match.price else { return nil }
+            return Double(price) / 10000.0 // Yes Price
+        } ?? []
+    }
     
-    // Structure the data similarly to the LineChartExampleView
+    var noData: [Double] {
+        matches?.compactMap { match in
+            guard let price = match.price else { return nil }
+            return 100.0 - (Double(price) / 10000.0) // No Price
+        } ?? []
+    }
+    
+    // Combine Yes and No data into a structured format
     var data: [(type: String, values: [Double])] {
         [
             (type: "Yes", values: yesData),
@@ -166,7 +180,8 @@ struct MarketChartView: View {
                     .font(.system(size: 16, weight: .bold))
                     .lineLimit(1)
             }
-            
+
+            // Chart rendering
             Chart(data, id: \.type) { dataSeries in
                 ForEach(dataSeries.values.indices, id: \.self) { index in
                     LineMark(
@@ -174,26 +189,18 @@ struct MarketChartView: View {
                         y: .value("Value", dataSeries.values[index])
                     )
                 }
-                .foregroundStyle(by: .value("Type", dataSeries.type))
+                .foregroundStyle(by: .value("Type", dataSeries.type)) // Apply different colors for Yes and No
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .opacity(0.8)
             }
-            .chartYScale(domain: 0...100)
-            .chartXAxis {
-                AxisMarks { _ in
-                    AxisValueLabel()
-                }
-            }
+            .chartYScale(domain: 0...100) // Y-axis domain for scaling
+            .chartXAxis(.hidden)
             .chartYAxis {
                 AxisMarks { _ in
-                    AxisValueLabel()
+                    AxisValueLabel() // Show labels on Y axis
                 }
             }
-            .chartLegend(position: .bottom, spacing: 10)
             .padding(.vertical, 6)
-            
-            
-            
         }
         .padding()
         .frame(height: 300)
@@ -201,6 +208,7 @@ struct MarketChartView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
+
 
 struct MarketOrderBookView: View {
     @State var orderbook: MarketOrderBook

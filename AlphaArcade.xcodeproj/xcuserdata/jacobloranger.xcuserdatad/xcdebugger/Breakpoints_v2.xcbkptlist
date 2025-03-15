@@ -62,9 +62,9 @@
             filePath = "AlphaArcade/Views/MarketDetailView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
-            landmarkName = "body"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
+            landmarkName = "columns"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
