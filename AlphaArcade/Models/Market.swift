@@ -28,6 +28,10 @@ struct Market: Identifiable, Codable {
     let fees: Double?
     let createdAt: Int?
     let rules: String?
+    let currentSpread: Double?
+    let lastTradePrice: Double?
+    let noProb: Double?
+    let yesProb: Double?
     
     var createdAtDate: Date? {
         guard let timestamp = createdAt else { return nil }

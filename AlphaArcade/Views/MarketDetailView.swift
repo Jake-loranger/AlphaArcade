@@ -24,7 +24,7 @@ struct MarketDetailView: View {
                         MarketTitleView(title: market.title, image: market.image)
                         MarketChartView()
                         MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
-                        MarketOrderBookView(orderbook: viewModel.marketOrderbook)
+                        MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: viewModel.marketDetails?.market)
 
                         MarketRulesView(market: market)
                         MarketCommentsView(marketComments: viewModel.marketComments ?? nil)
@@ -186,7 +186,8 @@ struct MarketChartView: View {
 }
 
 struct MarketOrderBookView: View {
-    let orderbook: MarketOrderBook
+    @State var orderbook: MarketOrderBook
+    @State var market: Market?
     @State private var selectedOption: String = "Yes"
 
     let columns: [GridItem] = [
@@ -206,13 +207,16 @@ struct MarketOrderBookView: View {
                     Text("Total").font(.system(size: 14)).foregroundColor(.gray)
                 }
                 .padding(.bottom, 4)
+                
+                    Text("Asks")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color.red)
+                        .padding(.bottom, 1)
 
                 ForEach(orderbook.keys.sorted(), id: \.self) { marketId in
                     if let marketData = orderbook[marketId] {
                         OrderSectionView(
-                            title: "Asks",
-                            orders: selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks,
-                            color: Color.red
+                            orders: selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks
                         )
                     }
                 }
@@ -221,22 +225,32 @@ struct MarketOrderBookView: View {
 
                 HStack {
                     Text("Last: ").foregroundColor(.gray)
-                    Text("N/A").foregroundColor(.white) // Placeholder, update with real data
+                    
+                    Text(market?.lastTradePrice != nil ? String(format: "¢%.2f", (market?.lastTradePrice ?? 0.0) / 10000)  : "-")
+                        .foregroundColor(.white)
+                    
                     Spacer()
+                    
                     Text("Spread: ").foregroundColor(.gray)
-                    Text("N/A").foregroundColor(.white) // Placeholder
+                    
+                    Text(market?.currentSpread != nil ? String(format: "¢%.2f", (market?.currentSpread ?? 0.0) / 10000) : "-")
+                        .foregroundColor(.white)
                 }
                 .font(.system(size: 12))
                 .padding(.vertical, 2)
 
                 Divider().padding(.vertical, 2)
                 
+                
+                    Text("Bids")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color.green)
+                        .padding(.bottom, 1)
+                
                 ForEach(orderbook.keys.sorted(), id: \.self) { marketId in
                     if let marketData = orderbook[marketId] {
                         OrderSectionView(
-                            title: "Bids",
-                            orders: selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids,
-                            color: Color.green
+                            orders: selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids
                         )
                     }
                 }
@@ -260,9 +274,7 @@ struct MarketOrderBookView: View {
 
 
 struct OrderSectionView: View {
-    let title: String
     let orders: [OrderEntry]
-    let color: Color
 
     let columns: [GridItem] = [
         GridItem(.fixed(50), alignment: .leading),
@@ -273,10 +285,6 @@ struct OrderSectionView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(title)
-                .font(.system(size: 14))
-                .foregroundColor(color)
-                .padding(.bottom, 1)
 
             LazyVGrid(columns: columns, spacing: 4) {
                 ForEach(orders, id: \.price) { order in
