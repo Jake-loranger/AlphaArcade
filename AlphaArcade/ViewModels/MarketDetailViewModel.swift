@@ -138,10 +138,13 @@ class MarketDetailViewModel: ObservableObject {
 
                 do {
                     let decoder = JSONDecoder()
-                    let decodedData = try decoder.decode(MarketOrderBook.self, from: data) // Decode into MarketOrderBook
-                    
+                    var decodedData = try decoder.decode(MarketOrderBook.self, from: data)
+
+                    // Transform order book to add missing data points
+                    let transformedData = self.transformOrderBook(decodedData)
+
                     DispatchQueue.main.async {
-                        self.marketOrderbook = decodedData // Store the full order book data
+                        self.marketOrderbook = transformedData
                     }
                 } catch {
                     DispatchQueue.main.async {
@@ -152,4 +155,61 @@ class MarketDetailViewModel: ObservableObject {
 
             task.resume()
         }
+
+    private func transformOrderBook(_ orderBook: MarketOrderBook) -> MarketOrderBook {
+        var newOrderBook: MarketOrderBook = [:]
+
+        for (marketId, marketData) in orderBook {
+            var newYesBids = marketData.yes.bids
+            var newYesAsks = marketData.yes.asks
+            var newNoBids = marketData.no.bids
+            var newNoAsks = marketData.no.asks
+
+            // 1. Add a NO ask for each YES bid
+            for bid in marketData.yes.bids {
+                let correspondingNoAskPrice = 1000000 - bid.price
+                if !newNoAsks.contains(where: { $0.price == correspondingNoAskPrice }) {
+                    let newAsk = OrderEntry(price: correspondingNoAskPrice, quantity: bid.quantity, total: bid.total)
+                    newNoAsks.append(newAsk)
+                }
+            }
+
+            // 2. Add a NO bid for each YES ask
+            for ask in marketData.yes.asks {
+                let correspondingNoBidPrice = 1000000 - ask.price
+                if !newNoBids.contains(where: { $0.price == correspondingNoBidPrice }) {
+                    let newBid = OrderEntry(price: correspondingNoBidPrice, quantity: ask.quantity, total: ask.total)
+                    newNoBids.append(newBid)
+                }
+            }
+
+            // 3. Add a YES ask for each NO bid
+            for bid in marketData.no.bids {
+                let correspondingYesAskPrice = 1000000 - bid.price
+                if !newYesAsks.contains(where: { $0.price == correspondingYesAskPrice }) {
+                    let newAsk = OrderEntry(price: correspondingYesAskPrice, quantity: bid.quantity, total: bid.total)
+                    newYesAsks.append(newAsk)
+                }
+            }
+
+            // 4. Add a YES bid for each NO ask
+            for ask in marketData.no.asks {
+                let correspondingYesBidPrice = 1000000 - ask.price
+                if !newYesBids.contains(where: { $0.price == correspondingYesBidPrice }) {
+                    let newBid = OrderEntry(price: correspondingYesBidPrice, quantity: ask.quantity, total: ask.total)
+                    newYesBids.append(newBid)
+                }
+            }
+
+            // Create new MarketData with updated values
+            let updatedMarketData = MarketData(
+                yes: OrderBook(bids: newYesBids, asks: newYesAsks),
+                no: OrderBook(bids: newNoBids, asks: newNoAsks)
+            )
+
+            newOrderBook[marketId] = updatedMarketData
+        }
+
+        return newOrderBook
+    }
 }

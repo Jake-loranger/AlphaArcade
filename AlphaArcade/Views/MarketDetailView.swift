@@ -241,13 +241,14 @@ struct MarketOrderBookView: View {
                 ForEach(orderbook.keys.sorted(), id: \.self) { marketId in
                     if let marketData = orderbook[marketId] {
                         OrderSectionView(
-                            orders: selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks
+                            orders: (selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks)
+                                .sorted { $0.price > $1.price }
                         )
                     }
                 }
-                
-                Divider().padding(.vertical, 2)
 
+                Divider().padding(.vertical, 2)
+                
                 HStack {
                     Text("Last: ").foregroundColor(.gray)
                     
@@ -264,18 +265,16 @@ struct MarketOrderBookView: View {
                 .font(.system(size: 12))
                 .padding(.vertical, 2)
 
-                Divider().padding(.vertical, 2)
-                
-                
-                    Text("Bids")
-                        .font(.system(size: 14))
-                        .foregroundColor(Color.green)
-                        .padding(.bottom, 1)
-                
+                Text("Bids")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color.green)
+                    .padding(.bottom, 1)
+
                 ForEach(orderbook.keys.sorted(), id: \.self) { marketId in
                     if let marketData = orderbook[marketId] {
                         OrderSectionView(
-                            orders: selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids
+                            orders: (selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids)
+                                .sorted { $0.price > $1.price }
                         )
                     }
                 }

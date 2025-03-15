@@ -32,6 +32,7 @@ struct Market: Identifiable, Codable {
     let lastTradePrice: Double?
     let noProb: Double?
     let yesProb: Double?
+    let options: [Option]?
     
     var createdAtDate: Date? {
         guard let timestamp = createdAt else { return nil }
@@ -47,12 +48,6 @@ struct Match: Codable {
     let marketId: String?
 }
 
-struct Comments: Codable {
-    let comments: [Comment]
-}
-
-struct Comment: Codable {
-    let text: String?
-    let senderWallet: String?
-    let updatedAt: Int?
+struct Option: Codable {
+    let label: String
 }

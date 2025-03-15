@@ -14,6 +14,7 @@
 		A16D52322D80F68B00730BE1 /* OrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52312D80F68B00730BE1 /* OrderView.swift */; };
 		A16D52352D81052B00730BE1 /* MarketDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52342D81052B00730BE1 /* MarketDetailViewModel.swift */; };
 		A16D52382D824A5C00730BE1 /* Orderbook.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52372D824A5C00730BE1 /* Orderbook.swift */; };
+		A16D523A2D86126800730BE1 /* Comments.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52392D86126800730BE1 /* Comments.swift */; };
 		A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */; };
 		A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682D2D7A5C910014FF4B /* MainView.swift */; };
 		A1F868302D7A5C990014FF4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F8682F2D7A5C990014FF4B /* Assets.xcassets */; };
@@ -48,6 +49,7 @@
 		A16D52312D80F68B00730BE1 /* OrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderView.swift; sourceTree = "<group>"; };
 		A16D52342D81052B00730BE1 /* MarketDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDetailViewModel.swift; sourceTree = "<group>"; };
 		A16D52372D824A5C00730BE1 /* Orderbook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orderbook.swift; sourceTree = "<group>"; };
+		A16D52392D86126800730BE1 /* Comments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comments.swift; sourceTree = "<group>"; };
 		A1F868282D7A5C910014FF4B /* AlphaArcade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaArcade.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeApp.swift; sourceTree = "<group>"; };
 		A1F8682D2D7A5C910014FF4B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 			children = (
 				A16D52252D7E911400730BE1 /* Market.swift */,
 				A16D52372D824A5C00730BE1 /* Orderbook.swift */,
+				A16D52392D86126800730BE1 /* Comments.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A16D52302D80F5F600730BE1 /* MarketDetailView.swift in Sources */,
+				A16D523A2D86126800730BE1 /* Comments.swift in Sources */,
 				A16D52322D80F68B00730BE1 /* OrderView.swift in Sources */,
 				A16D52352D81052B00730BE1 /* MarketDetailViewModel.swift in Sources */,
 				A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */,
