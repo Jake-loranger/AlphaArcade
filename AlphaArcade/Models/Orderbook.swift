@@ -7,18 +7,20 @@
 
 import Foundation
 
-struct Order: Codable {
+struct OrderEntry: Codable {
     let price: Int
     let quantity: Int
     let total: Int
 }
 
-struct MarketSide: Codable {
-    let bids: [Order]
-    let asks: [Order]
+struct OrderBook: Codable {
+    let bids: [OrderEntry]
+    let asks: [OrderEntry]
 }
 
-struct OrderBook: Codable {
-    let yes: MarketSide
-    let no: MarketSide
+struct MarketData: Codable {
+    let yes: OrderBook
+    let no: OrderBook
 }
+
+typealias MarketOrderBook = [String: MarketData]

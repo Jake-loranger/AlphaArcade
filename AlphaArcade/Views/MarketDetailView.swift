@@ -24,7 +24,7 @@ struct MarketDetailView: View {
                         MarketTitleView(title: market.title, image: market.image)
                         MarketChartView()
                         MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
-                        MarketOrderBookView(orderbook: viewModel.marketOrderbook ?? nil)
+                        MarketOrderBookView(orderbook: viewModel.marketOrderbook)
 
                         MarketRulesView(market: market)
                         MarketCommentsView(marketComments: viewModel.marketComments ?? nil)
@@ -186,7 +186,7 @@ struct MarketChartView: View {
 }
 
 struct MarketOrderBookView: View {
-    let orderbook: OrderBook?
+    let orderbook: MarketOrderBook
     @State private var selectedOption: String = "Yes"
 
     let columns: [GridItem] = [
@@ -198,7 +198,7 @@ struct MarketOrderBookView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            if let marketData = orderbook {
+            if orderbook != nil {
                 LazyVGrid(columns: columns, spacing: 4) {
                     Text("Trade").font(.system(size: 14)).foregroundColor(.gray)
                     Text("Price").font(.system(size: 14)).foregroundColor(.gray)
@@ -207,11 +207,16 @@ struct MarketOrderBookView: View {
                 }
                 .padding(.bottom, 4)
 
-                OrderSectionView(
-                    title: "Asks",
-                    orders: selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks,
-                    color: Color.red
-                )
+                ForEach(orderbook.keys.sorted(), id: \.self) { marketId in
+                    if let marketData = orderbook[marketId] {
+                        OrderSectionView(
+                            title: "Asks",
+                            orders: selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks,
+                            color: Color.red
+                        )
+                    }
+                }
+                
                 Divider().padding(.vertical, 2)
 
                 HStack {
@@ -225,11 +230,16 @@ struct MarketOrderBookView: View {
                 .padding(.vertical, 2)
 
                 Divider().padding(.vertical, 2)
-                OrderSectionView(
-                    title: "Bids",
-                    orders: selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids,
-                    color: Color.green
-                )
+                
+                ForEach(orderbook.keys.sorted(), id: \.self) { marketId in
+                    if let marketData = orderbook[marketId] {
+                        OrderSectionView(
+                            title: "Bids",
+                            orders: selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids,
+                            color: Color.green
+                        )
+                    }
+                }
 
                 Picker("Select an option", selection: $selectedOption) {
                     Text("Yes").tag("Yes")
@@ -251,7 +261,7 @@ struct MarketOrderBookView: View {
 
 struct OrderSectionView: View {
     let title: String
-    let orders: [Order]
+    let orders: [OrderEntry]
     let color: Color
 
     let columns: [GridItem] = [

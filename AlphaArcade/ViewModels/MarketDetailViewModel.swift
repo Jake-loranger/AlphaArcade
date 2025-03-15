@@ -3,9 +3,9 @@ import Foundation
 class MarketDetailViewModel: ObservableObject {
     @Published var marketDetails: MarketDetail?
     @Published var marketComments: [Comment]?
+    @Published var marketOrderbook: MarketOrderBook = [:]
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
-    @Published var marketOrderbook: OrderBook?
     
     func fetchMarketDetails(marketId: String) {
         isLoading = true
@@ -131,20 +131,18 @@ class MarketDetailViewModel: ObservableObject {
                     }
                     return
                 }
-                
+
                 if let jsonString = String(data: data, encoding: .utf8) {
-                            print("Raw JSON data: \(jsonString)")
-                        }
+                    print("Raw JSON data: \(jsonString)")
+                }
 
                 do {
                     let decoder = JSONDecoder()
-                    let decodedData = try decoder.decode([String: OrderBook].self, from: data)
-
-                    if let firstOrderbook = decodedData.first?.value {
-                         DispatchQueue.main.async {
-                             self.marketOrderbook = firstOrderbook
-                         }
-                     }
+                    let decodedData = try decoder.decode(MarketOrderBook.self, from: data) // Decode into MarketOrderBook
+                    
+                    DispatchQueue.main.async {
+                        self.marketOrderbook = decodedData // Store the full order book data
+                    }
                 } catch {
                     DispatchQueue.main.async {
                         self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
