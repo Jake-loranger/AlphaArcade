@@ -47,6 +47,11 @@ struct MarketDetailView: View {
             viewModel.fetchComments(marketId: market.id ?? "")
             viewModel.fetchOrderbook(marketId: market.id ?? "")
         }
+        .refreshable {
+            viewModel.fetchMarketDetails(marketId: market.id ?? "")
+            viewModel.fetchComments(marketId: market.id ?? "")
+            viewModel.fetchOrderbook(marketId: market.id ?? "")
+        }
         .sheet(isPresented: $showOrderView) {
             if let option = selectedOption {
                 OrderView(option: option)
@@ -264,6 +269,8 @@ struct MarketOrderBookView: View {
                 }
                 .font(.system(size: 12))
                 .padding(.vertical, 2)
+                
+                Divider().padding(.vertical, 2)
 
                 Text("Bids")
                     .font(.system(size: 14))
