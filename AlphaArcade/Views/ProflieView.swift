@@ -47,22 +47,31 @@ struct ProfileDetailsView: View {
     @Environment(\.presentationMode) var presentationMode  // For navigating back
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var selectedTab = "Positions"
 
     var body: some View {
         VStack {
-
             if isLoading {
                 ProgressView()
             } else {
-                Text("Wallet: \(walletAddress ?? "N/A")")
-                    .padding()
-                Text("Participant Data:")
-                    .bold()
-                Text(participantData)
-                    .padding()
+                Picker("Select", selection: $selectedTab) {
+                    Text("Positions").tag("Positions")
+                    Text("Orders").tag("Orders")
+                }
+                .pickerStyle(.segmented)
+                .padding([.top, .leading, .trailing])
+                
+                if selectedTab == "Orders" {
+                    OpenOrdersView()
+                        .padding()
+                } else {
+                    PositionsView()
+                        .padding()
+                }
+                Spacer()
             }
         }
-        .navigationTitle("Profile Details")
+        .navigationTitle("\(walletInput)")
         .onAppear {
             fetchWalletDetails()
         }
@@ -71,7 +80,7 @@ struct ProfileDetailsView: View {
                 title: Text("Error"),
                 message: Text(alertMessage),
                 dismissButton: .default(Text("OK")) {
-                    presentationMode.wrappedValue.dismiss()  // Navigate back
+                    presentationMode.wrappedValue.dismiss()
                 }
             )
         }
@@ -155,5 +164,113 @@ struct ProfileDetailsView: View {
                 }
             }
         }.resume()
+    }
+}
+
+
+struct OpenOrdersView: View {
+
+    var body: some View {
+        Text("OPen orders")
+    }
+}
+
+struct PositionsView: View {
+    let positions: [Position] = [
+        Position(
+            title: "NBA Champion - Boston Celtics",
+            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
+            position: "Yes",
+            costBasis: 150.00,
+            totalInvested: 9.53,
+            tokenBalance: 10,
+            price: 155.00,
+            current: 160.00
+        ),
+        Position(
+            title: "NBA Champion - Boston Celtics",
+            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
+            position: "No",
+            costBasis: 150.00,
+            totalInvested: 9.53,
+            tokenBalance: 10,
+            price: 155.00,
+            current: 160.00
+        ),
+        Position(
+            title: "NBA Champion - Boston Celtics",
+            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
+            position: "Yes",
+            costBasis: 150.00,
+            totalInvested: 9.53,
+            tokenBalance: 10,
+            price: 155.00,
+            current: 160.00
+        )
+    ]
+    
+    var body: some View {
+        ScrollView {
+            ForEach(positions, id: \.title) { position in
+                VStack(alignment: .leading) {
+                    HStack(alignment: .top) {
+                        AsyncImage(url: position.image) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView() // Show a loading spinner
+                                    .frame(width: 50, height: 50)
+                            case .success(let image):
+                                image.resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            case .failure:
+                                Image(systemName: "photo") // Fallback image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.gray)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                        .padding(.trailing)
+                        
+                        Text(position.title)
+                            .font(.headline)
+                            .padding(.bottom)
+                    }
+                    .padding(.bottom)
+
+                    HStack {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text("\(position.position)")
+                                    .font(.subheadline)
+                                    .foregroundColor(position.position.lowercased() == "yes" ? .green : .red)
+                                Text("-> \(String(format: "%.2f", position.tokenBalance)) Shares")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.bottom, 4)
+                            Text("Current: \(String(format: "%.2f", position.current))")
+                                .font(.subheadline)
+                        }
+                        Spacer()
+                        VStack(alignment: .leading) {
+                            Text("Risked: $\(String(format: "%.2f", position.price))")
+                                .font(.subheadline)
+                                .padding(.bottom, 4)
+                            Text("To Win: \(String(format: "%.2f", position.tokenBalance))")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+            }
+        }
     }
 }

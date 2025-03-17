@@ -450,7 +450,7 @@ struct OrderButtonsView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
-        .padding()
+        .padding([.top, .leading, .trailing])
         .shadow(radius: 3)
     }
 }
