@@ -185,7 +185,7 @@ struct PositionsView: View {
             totalInvested: 9.53,
             tokenBalance: 10,
             price: 155.00,
-            current: 160.00
+            current: 54.00
         ),
         Position(
             title: "NBA Champion - Boston Celtics",
@@ -194,8 +194,8 @@ struct PositionsView: View {
             costBasis: 150.00,
             totalInvested: 9.53,
             tokenBalance: 10,
-            price: 155.00,
-            current: 160.00
+            price: 400.00,
+            current: 1060.00
         ),
         Position(
             title: "NBA Champion - Boston Celtics",
@@ -204,8 +204,8 @@ struct PositionsView: View {
             costBasis: 150.00,
             totalInvested: 9.53,
             tokenBalance: 10,
-            price: 155.00,
-            current: 160.00
+            price: 15.00,
+            current: 16.00
         )
     ]
     
@@ -250,20 +250,33 @@ struct PositionsView: View {
                                     .foregroundColor(position.position.lowercased() == "yes" ? .green : .red)
                                 Text("-> \(String(format: "%.2f", position.tokenBalance)) Shares")
                                     .font(.subheadline)
-                                    .foregroundColor(.gray)
                             }
                             .padding(.bottom, 4)
-                            Text("Current: \(String(format: "%.2f", position.current))")
-                                .font(.subheadline)
+                            HStack {
+                                Text("Current: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("$\(String(format: "%.2f", position.current))")
+                                    .font(.subheadline)
+                            }
                         }
                         Spacer()
                         VStack(alignment: .leading) {
-                            Text("Risked: $\(String(format: "%.2f", position.price))")
-                                .font(.subheadline)
-                                .padding(.bottom, 4)
-                            Text("To Win: \(String(format: "%.2f", position.tokenBalance))")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                            HStack{
+                                Text("Risked: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                               Text("$\(String(format: "%.2f", position.price))")
+                                    .font(.subheadline)
+                            }
+                            .padding(.bottom, 4)
+                            HStack {
+                                Text("To Win: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("$\(String(format: "%.2f", position.tokenBalance))")
+                                    .font(.subheadline)
+                            }
                         }
                     }
                 }
