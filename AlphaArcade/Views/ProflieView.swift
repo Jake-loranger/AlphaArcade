@@ -14,7 +14,7 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             VStack {
-
+                
                 TextField("Enter wallet or NFDomain", text: $walletAddress)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .autocorrectionDisabled(true)
@@ -169,9 +169,124 @@ struct ProfileDetailsView: View {
 
 
 struct OpenOrdersView: View {
+    
+    let sampleOrders: [Order] = [
+        Order(
+            title: "NBA Champion - Boston Celtics",
+            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
+            side: "Buy",
+            outcome: "Yes",
+            price: 150.75,
+            filled: 5.0,
+            total: 753.75
+        ),
+        Order(
+            title: "Super Bowl Winner - Kansas City Chiefs",
+            image: URL(string: "https://licensing.auburn.edu/wp-content/uploads/2020/02/Standard1.jpg")!,
+            side: "Sell",
+            outcome: "No",
+            price: 120.50,
+            filled: 3.0,
+            total: 361.50
+        ),
+        Order(
+            title: "US Presidential Election - 2024",
+            image: URL(string: "https://spiritofamerica.org/wp-content/uploads/2022/02/iStock-1358369065-1.jpg")!,
+            side: "Buy",
+            outcome: "Yes",
+            price: 90.25,
+            filled: 10.0,
+            total: 902.50
+        ),
+        Order(
+            title: "Bitcoin Price Above 100K by 2025",
+            image: URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/800px-Bitcoin.svg.png")!,
+            side: "Sell",
+            outcome: "No",
+            price: 80.00,
+            filled: 2.5,
+            total: 200.00
+        )
+    ]
+
 
     var body: some View {
-        Text("OPen orders")
+        ScrollView {
+            ForEach(sampleOrders, id: \.title) { order in
+                VStack(alignment: .leading) {
+                    HStack(alignment: .top) {
+                        AsyncImage(url: order.image) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                                    .frame(width: 50, height: 50)
+                            case .success(let image):
+                                image.resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.gray)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                        .padding(.trailing)
+
+                        Text(order.title)
+                            .font(.headline)
+                            .padding(.bottom)
+                    }
+                    .padding(.bottom)
+
+                    HStack {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(order.side)
+                                    .font(.subheadline)
+                                    .foregroundColor(order.side.lowercased() == "buy" ? .green : .red)
+                                Text("\u{2192}  \(order.outcome)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.bottom, 4)
+                            HStack {
+                                Text("Filled: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(String(format: "%.2f", order.filled))%")
+                                    .font(.subheadline)
+                            }
+                        }
+                        Spacer()
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text("Price: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("$\(String(format: "%.2f", order.price))")
+                                    .font(.subheadline)
+                            }
+                            .padding(.bottom, 4)
+                            HStack {
+                                Text("Total: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("$\(String(format: "%.2f", order.total))")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                }
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+            }
+        }
     }
 }
 
@@ -179,7 +294,7 @@ struct PositionsView: View {
     let positions: [Position] = [
         Position(
             title: "NBA Champion - Boston Celtics",
-            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
+            image: URL(string: "https://spiritofamerica.org/wp-content/uploads/2022/02/iStock-1358369065-1.jpg")!,
             position: "Yes",
             costBasis: 150.00,
             totalInvested: 9.53,
@@ -188,7 +303,7 @@ struct PositionsView: View {
             current: 54.00
         ),
         Position(
-            title: "NBA Champion - Boston Celtics",
+            title: "Bitcoin Price Above 100K by 2025",
             image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
             position: "No",
             costBasis: 150.00,
@@ -198,8 +313,8 @@ struct PositionsView: View {
             current: 1060.00
         ),
         Position(
-            title: "NBA Champion - Boston Celtics",
-            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
+            title: "US Presidential Election - 2024",
+            image: URL(string: "https://spiritofamerica.org/wp-content/uploads/2022/02/iStock-1358369065-1.jpg")!,
             position: "Yes",
             costBasis: 150.00,
             totalInvested: 9.53,
@@ -248,7 +363,7 @@ struct PositionsView: View {
                                 Text("\(position.position)")
                                     .font(.subheadline)
                                     .foregroundColor(position.position.lowercased() == "yes" ? .green : .red)
-                                Text("-> \(String(format: "%.2f", position.tokenBalance)) Shares")
+                                Text("\u{2192}  \(String(format: "%.2f", position.tokenBalance)) Shares")
                                     .font(.subheadline)
                             }
                             .padding(.bottom, 4)

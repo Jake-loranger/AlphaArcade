@@ -13,7 +13,13 @@ struct Profile: Codable {
 }
 
 struct Order: Codable {
-    
+    let title: String
+    let image: URL
+    let side: String
+    let outcome: String
+    let price: Double
+    let filled: Double
+    let total: Double
 }
 
 struct Position: Codable {
