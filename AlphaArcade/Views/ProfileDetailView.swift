@@ -1,49 +1,21 @@
 //
-//  ProflieView.swift
+//  ProfileDetailView.swift
 //  AlphaArcade
 //
-//  Created by Jacob  Loranger on 3/11/25.
+//  Created by Jacob  Loranger on 3/19/25.
 //
 
 import SwiftUI
 
-struct ProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel()
-    @State private var walletAddress: String = ""
-    @State private var navigateToProfileDetails = false
-
-    var body: some View {
-        NavigationStack {
-            VStack {
-                TextField("Enter wallet or NFDomain", text: $walletAddress)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocorrectionDisabled(true)
-                    .padding()
-                    .onSubmit {
-                        navigateToProfileDetails = true
-                    }
-
-                Button("Submit") {
-                    navigateToProfileDetails = true
-                }
-                .buttonStyle(.borderedProminent)
-                .padding()
-
-                Spacer()
-            }
-            .navigationTitle("Profile")
-            .navigationDestination(isPresented: $navigateToProfileDetails) {
-                ProfileDetailsView(walletInput: walletAddress, viewModel: viewModel)
-            }
-        }
-    }
-}
-
-struct ProfileDetailsView: View {
+struct ProfileDetailView: View {
     let walletInput: String
-    @StateObject var viewModel: ProfileViewModel
-    @Environment(\.presentationMode) var presentationMode
+    let walletAddress: String
+    @StateObject var viewModel: ProfileDetailViewModel
     @State private var selectedTab = "Positions"
+    
+    init(walletInput: String) {
+        self.walletInput = walletInput
+    }
 
     var body: some View {
         VStack {
@@ -56,7 +28,7 @@ struct ProfileDetailsView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding([.top, .leading, .trailing])
-                
+
                 if selectedTab == "Orders" {
                     OpenOrdersView(viewModel: viewModel)
                         .padding()
@@ -68,52 +40,92 @@ struct ProfileDetailsView: View {
             }
         }
         .navigationTitle("\(walletInput)")
-        .onAppear {
-            viewModel.fetchWalletDetails(walletInput: walletInput)
-        }
-        .alert(isPresented: $viewModel.showAlert) {
-            Alert(
-                title: Text("Error"),
-                message: Text(viewModel.alertMessage ?? ""),
-                dismissButton: .default(Text("OK")) {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            )
-        }
     }
+    
+//    func fetchWalletDetails(walletInput: String) {
+//        if walletInput.hasSuffix(".algo") {
+//            resolveNFDToWallet(nfd: walletInput) { resolvedAddress in
+//                if let resolvedAddress = resolvedAddress {
+//                    self.walletAddress = resolvedAddress
+//                    self.navigateToProfileDetails = true
+//                } else {
+////                    
+//                }
+//            }
+//        } else {
+//            self.walletAddress = walletInput
+//        }
+//    }
+//
+//    private func resolveNFDToWallet(nfd: String, completion: @escaping (String?) -> Void) {
+//        let lowercaseNFD = nfd.lowercased()
+//        let urlString = "https://api.nf.domains/nfd/\(lowercaseNFD)"
+//        guard let url = URL(string: urlString) else { return }
+//
+//        URLSession.shared.dataTask(with: url) { data, _, error in
+//            guard let data = data, error == nil else {
+//                DispatchQueue.main.async {
+//                    self.alertMessage = "Failed to fetch NFD details."
+//                    self.showAlert = true
+//                }
+//                return
+//            }
+//
+//            do {
+//                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+//                   let depositAccount = json["depositAccount"] as? String {
+//                    DispatchQueue.main.async {
+//                        completion(depositAccount)
+//                    }
+//                } else {
+//                    DispatchQueue.main.async {
+//                        self.alertMessage = "Invalid NFD response."
+//                        self.showAlert = true
+//                    }
+//                }
+//            } catch {
+//                DispatchQueue.main.async {
+//                    self.alertMessage = "Error parsing NFD response."
+//                    self.showAlert = true
+//                }
+//            }
+//        }.resume()
+//    }
 }
 
 
 struct OpenOrdersView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    @ObservedObject var viewModel: ProfileDetailViewModel
 
     var body: some View {
         ScrollView {
-                ForEach(viewModel.openOrders, id: \.marketID) { order in
+            if let openOrders = viewModel.openOrders {
+                ForEach(openOrders, id: \.marketID) { order in
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
-                            AsyncImage(url: URL(string: "")) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(width: 50, height: 50)
-                                case .success(let image):
-                                    image.resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                case .failure:
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.gray)
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
-                            .padding(.trailing)
-                            Text("Market Name")
+                            //                        AsyncImage(url: order.image) { phase in
+                            //                            switch phase {
+                            //                            case .empty:
+                            //                                ProgressView()
+                            //                                    .frame(width: 50, height: 50)
+                            //                            case .success(let image):
+                            //                                image.resizable()
+                            //                                    .scaledToFit()
+                            //                                    .frame(width: 50, height: 50)
+                            //                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            //                            case .failure:
+                            //                                Image(systemName: "photo")
+                            //                                    .resizable()
+                            //                                    .scaledToFit()
+                            //                                    .frame(width: 50, height: 50)
+                            //                                    .foregroundColor(.gray)
+                            //                            @unknown default:
+                            //                                EmptyView()
+                            //                            }
+                            //                        }
+                            //                        .padding(.trailing)
+                            
+                            Text(order.marketID ?? "-")
                                 .font(.headline)
                                 .padding(.bottom)
                         }
@@ -122,10 +134,10 @@ struct OpenOrdersView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 HStack {
-                                    Text(order.orderSide ?? "--")
+                                    Text(order.orderSide ?? "-")
                                         .font(.subheadline)
                                         .foregroundColor(order.orderSide?.lowercased() == "buy" ? .green : .red)
-                                    Text(order.orderPosition == 1 ? "\u{2192} Yes" : "\u{2192} No: \(order.orderPosition ?? 0)")
+                                    Text("\u{2192}  \(order.orderPosition)")
                                         .font(.subheadline)
                                         .foregroundColor(.white)
                                 }
@@ -134,7 +146,7 @@ struct OpenOrdersView: View {
                                     Text("Filled: ")
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
-                                    Text("\(String(format: "%.2f", (order.orderQuantityFilled ?? 0) / 10000))%")
+                                    Text("\(String(format: "%.2f", order.orderQuantityFilled ?? 0))%")
                                         .font(.subheadline)
                                 }
                             }
@@ -144,7 +156,7 @@ struct OpenOrdersView: View {
                                     Text("Price: ")
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (order.orderPrice ?? 0) / 1000000))")
+                                    Text("$\(String(format: "%.2f", order.orderPrice ?? 0))")
                                         .font(.subheadline)
                                 }
                                 .padding(.bottom, 4)
@@ -152,7 +164,7 @@ struct OpenOrdersView: View {
                                     Text("Total: ")
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (order.orderQuantity ?? 0) * (order.orderPrice ?? 0) / 1000000000000))")
+                                    Text("$\(String(format: "%.2f", (order.orderPrice ?? 0) * (order.orderQuantity ?? 0)))")
                                         .font(.subheadline)
                                 }
                             }
@@ -164,7 +176,7 @@ struct OpenOrdersView: View {
                 }
             }
         }
-    
+    }
 }
 
 struct PositionsView: View {

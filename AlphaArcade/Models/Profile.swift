@@ -12,14 +12,18 @@ struct Profile: Codable {
     let currentpostions: [Position]
 }
 
+struct OrdersResponse: Codable {
+    let orders: [Order]
+}
+
 struct Order: Codable {
-    let title: String
-    let image: URL
-    let side: String
-    let outcome: String
-    let price: Double
-    let filled: Double
-    let total: Double
+    let marketID: Double?
+    let orderSide: String?
+    let orderPosition: Double?
+    let orderPrice: Double?
+    let orderQuantityFilled: Double?
+    let orderQuantity: Double?
+    let createdAt: Double?
 }
 
 struct Position: Codable {
