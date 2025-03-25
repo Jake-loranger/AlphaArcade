@@ -83,89 +83,91 @@ struct ProfileDetailsView: View {
     }
 }
 
-
 struct OpenOrdersView: View {
+
     @ObservedObject var viewModel: ProfileViewModel
 
     var body: some View {
         ScrollView {
-                ForEach(viewModel.openOrders, id: \.marketID) { order in
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top) {
-                            AsyncImage(url: URL(string: "")) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(width: 50, height: 50)
-                                case .success(let image):
-                                    image.resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                case .failure:
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.gray)
-                                @unknown default:
-                                    EmptyView()
-                                }
+            ForEach(viewModel.openOrders, id: \.marketId) { order in
+                VStack(alignment: .leading) {
+                    HStack(alignment: .top) {
+                        AsyncImage(url: order.image) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                                    .frame(width: 50, height: 50)
+                            case .success(let image):
+                                image.resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.gray)
+                            @unknown default:
+                                EmptyView()
                             }
-                            .padding(.trailing)
-                            Text("Market Name")
-                                .font(.headline)
-                                .padding(.bottom)
                         }
-                        .padding(.bottom)
+                        .padding(.trailing)
                         
-                        HStack {
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text(order.orderSide ?? "--")
-                                        .font(.subheadline)
-                                        .foregroundColor(order.orderSide?.lowercased() == "buy" ? .green : .red)
-                                    Text(order.orderPosition == 1 ? "\u{2192} Yes" : "\u{2192} No: \(order.orderPosition ?? 0)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.white)
-                                }
-                                .padding(.bottom, 4)
-                                HStack {
-                                    Text("Filled: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("\(String(format: "%.2f", (order.orderQuantityFilled ?? 0) / 10000))%")
-                                        .font(.subheadline)
-                                }
+                        Text(order.title ?? "--")
+                            .font(.headline)
+                            .padding(.bottom)
+                    }
+                    .padding(.bottom)
+                    
+                    HStack {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(order.orderSide ?? "--")
+                                    .font(.subheadline)
+                                    .foregroundColor(order.orderSide?.lowercased() == "buy" ? .green : .red)
+                                Text(order.orderPosition == 1 ? "\u{2192} Yes" : "\u{2192} No")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
                             }
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text("Price: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (order.orderPrice ?? 0) / 1000000))")
-                                        .font(.subheadline)
-                                }
-                                .padding(.bottom, 4)
-                                HStack {
-                                    Text("Total: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (order.orderQuantity ?? 0) * (order.orderPrice ?? 0) / 1000000000000))")
-                                        .font(.subheadline)
-                                }
+                            .padding(.bottom, 4)
+                            HStack {
+                                Text("Filled: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(String(format: "%.2f", (order.orderQuantityFilled ?? 0) / 10000))%")
+                                    .font(.subheadline)
+                            }
+                        }
+                        Spacer()
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text("Price: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("$\(String(format: "%.2f", (order.orderPrice ?? 0) / 1000000))")
+                                    .font(.subheadline)
+                            }
+                            .padding(.bottom, 4)
+                            HStack {
+                                Text("Total: ")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("$\(String(format: "%.2f", (order.orderQuantity ?? 0) * (order.orderPrice ?? 0) / 1000000000000))")
+                                    .font(.subheadline)
                             }
                         }
                     }
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
                 }
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
             }
         }
-    
+    }
 }
+
+
 
 struct PositionsView: View {
     let currentPositions: [Position] // Accepting currentPositions array from ViewModel

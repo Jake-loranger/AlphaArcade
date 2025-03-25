@@ -17,7 +17,9 @@ struct OrdersResponse: Codable {
 }
 
 struct Order: Codable {
-    let marketID: Double?
+    let marketId: String?
+    var title: String?
+    var image: URL?
     let orderSide: String?
     let orderPosition: Double?
     let orderPrice: Double?

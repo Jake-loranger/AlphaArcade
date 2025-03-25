@@ -111,7 +111,7 @@ class ProfileViewModel: ObservableObject {
                 errorMessage = "Wallet address not set"
                 return
             }
-            
+
             isLoading = true
             let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-wallet-orders?wallet=\(wallet)"
             guard let url = URL(string: urlString) else {
@@ -119,26 +119,20 @@ class ProfileViewModel: ObservableObject {
                 isLoading = false
                 return
             }
-            
+
             let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                }
-                
+                DispatchQueue.main.async { self.isLoading = false }
+
                 if let error = error {
-                    DispatchQueue.main.async {
-                        self.errorMessage = "Error fetching data: \(error.localizedDescription)"
-                    }
+                    DispatchQueue.main.async { self.errorMessage = "Error fetching data: \(error.localizedDescription)" }
                     return
                 }
-                
+
                 guard let data = data else {
-                    DispatchQueue.main.async {
-                        self.errorMessage = "No data received"
-                    }
+                    DispatchQueue.main.async { self.errorMessage = "No data received" }
                     return
                 }
-                
+
                 do {
                     let decoder = JSONDecoder()
                     let ordersResponse = try decoder.decode(OrdersResponse.self, from: data)
@@ -146,16 +140,30 @@ class ProfileViewModel: ObservableObject {
                     DispatchQueue.main.async {
                         self.openOrders = ordersResponse.orders
                     }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
+
+                    // Fetch market details for each order
+                    for order in ordersResponse.orders {
+                        if let marketId = order.marketId {
+                            self.fetchMarketDetails(marketId: marketId) { title, imageUrl in
+                                DispatchQueue.main.async {
+                                    
+                                    // Update the corresponding order in openOrders
+                                    if let index = self.openOrders.firstIndex(where: { $0.marketId == marketId }) {
+                                        self.openOrders[index].title = title
+                                        self.openOrders[index].image = imageUrl
+                                    }
+                                }
+                            }
+                        }
                     }
+
+                } catch {
+                    DispatchQueue.main.async { self.errorMessage = "Failed to decode data: \(error.localizedDescription)" }
                 }
             }
             
             task.resume()
         }
-
     
     func fetchParticipantData() {
         isLoading = true
@@ -204,5 +212,43 @@ class ProfileViewModel: ObservableObject {
         }
         
         task.resume()
+    }
+    
+    func fetchMarketDetails(marketId: String, completion: @escaping (String?, URL?) -> Void) {
+            let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-market?marketId=\(marketId)"
+            guard let url = URL(string: urlString) else {
+                errorMessage = "Invalid URL"
+                return
+            }
+
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                if let error = error {
+                    DispatchQueue.main.async { self.errorMessage = "Error fetching market details: \(error.localizedDescription)" }
+                    return
+                }
+
+                guard let data = data else {
+                    DispatchQueue.main.async { self.errorMessage = "No market data received" }
+                    return
+                }
+
+                do {
+                    
+                        if let jsonString = String(data: data, encoding: .utf8) {
+                            print("Raw JSON response: \(jsonString)")
+                        }
+                    let decoder = JSONDecoder()
+                    let marketDetail = try decoder.decode(MarketDetail.self, from: data)
+                    
+                    let title = marketDetail.market.topic
+                    let imageUrl = marketDetail.market.image
+
+                    completion(title, imageUrl)
+                } catch {
+                    DispatchQueue.main.async { self.errorMessage = "Failed to decode market data: \(error.localizedDescription)" }
+                }
+            }
+
+            task.resume()
     }
 }

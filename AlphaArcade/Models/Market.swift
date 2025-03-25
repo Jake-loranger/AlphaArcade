@@ -21,6 +21,7 @@ struct MarketDetail: Codable {
 struct Market: Identifiable, Codable {
     let id: String?
     let title: String?
+    let topic: String?
     let resolution: Int?
     let image: URL?
     let volume: Double?
