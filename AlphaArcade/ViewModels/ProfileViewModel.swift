@@ -14,40 +14,8 @@ class ProfileViewModel: ObservableObject {
     @Published var alertMessage: String?
     @Published var showAlert = false
     @Published var openOrders: [Order] = []
-    
-    @Published var currentPositions: [Position] = [
-        Position(
-            title: "NBA Champion - Boston Celtics",
-            image: URL(string: "https://spiritofamerica.org/wp-content/uploads/2022/02/iStock-1358369065-1.jpg")!,
-            position: "Yes",
-            costBasis: 150.00,
-            totalInvested: 9.53,
-            tokenBalance: 10,
-            price: 155.00,
-            current: 54.00
-        ),
-        Position(
-            title: "Bitcoin Price Above 100K by 2025",
-            image: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRkjjLr3j0FpmlTy6ye6IQUFQcOYxpypxFpg&s")!,
-            position: "No",
-            costBasis: 150.00,
-            totalInvested: 9.53,
-            tokenBalance: 10,
-            price: 400.00,
-            current: 1060.00
-        ),
-        Position(
-            title: "US Presidential Election - 2024",
-            image: URL(string: "https://spiritofamerica.org/wp-content/uploads/2022/02/iStock-1358369065-1.jpg")!,
-            position: "Yes",
-            costBasis: 150.00,
-            totalInvested: 9.53,
-            tokenBalance: 10,
-            price: 15.00,
-            current: 16.00
-        )
-    ]
-    
+    @Published var currentPositions: [Position] = []
+    @Published var formattedPositions: [FormattedPosition] = []
     
     func fetchWalletDetails(walletInput: String) {
         if walletInput.hasSuffix(".algo") {
@@ -56,6 +24,7 @@ class ProfileViewModel: ObservableObject {
                     if let resolvedAddress = resolvedAddress {
                         self.walletAddress = resolvedAddress
                         self.fetchOpenOrders()
+                        self.fetchParticipantData()
                     } else {
                         self.alertMessage = "Invalid NFD domain."
                         self.showAlert = true
@@ -66,6 +35,7 @@ class ProfileViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.walletAddress = walletInput
                 self.fetchOpenOrders()
+                self.fetchParticipantData()
             }
         }
     }
@@ -144,7 +114,7 @@ class ProfileViewModel: ObservableObject {
                     // Fetch market details for each order
                     for order in ordersResponse.orders {
                         if let marketId = order.marketId {
-                            self.fetchMarketDetails(marketId: marketId) { title, imageUrl in
+                            self.fetchMarketDetails(marketId: marketId) { title, imageUrl, _ in
                                 DispatchQueue.main.async {
                                     
                                     // Update the corresponding order in openOrders
@@ -166,10 +136,15 @@ class ProfileViewModel: ObservableObject {
         }
     
     func fetchParticipantData() {
+        
+        guard let wallet = walletAddress else {
+            errorMessage = "Wallet address not set"
+            return
+        }
         isLoading = true
         
         // Set up the URL for the API request (replace with actual API URL)
-        let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-wallet-participant-data?wallet=\(self.walletAddress)"
+        let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-wallet-participant-data?wallet=\(wallet)"
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid URL"
             isLoading = false
@@ -198,12 +173,30 @@ class ProfileViewModel: ObservableObject {
             do {
                 // Decode the data into the MarketDetail struct
                 let decoder = JSONDecoder()
-                let currentPositions = try decoder.decode([Position].self, from: data)
+                let positions = try decoder.decode(PositionResponse.self, from: data)
                 
                 DispatchQueue.main.async {
-//                    self.currentPositions = currentPositions
-                    print("good")
+                    self.currentPositions = positions.participants
                 }
+                
+                // Fetch market details for each order
+                for position in positions.participants {
+                    if let marketId = position.marketId {
+                        self.fetchMarketDetails(marketId: marketId) { title, imageUrl, lastTradePrice in
+                            DispatchQueue.main.async {
+                                
+                                // Update the corresponding order in currentPositions
+                                if let index = self.currentPositions.firstIndex(where: { $0.marketId == marketId }) {
+                                    self.currentPositions[index].title = title
+                                    self.currentPositions[index].image = imageUrl
+                                    self.currentPositions[index].lastTradePrice = lastTradePrice
+                                    self.updateFormattedPositions()
+                                }
+                            }
+                        }
+                    }
+                }
+                
             } catch {
                 DispatchQueue.main.async {
                     self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
@@ -214,7 +207,7 @@ class ProfileViewModel: ObservableObject {
         task.resume()
     }
     
-    func fetchMarketDetails(marketId: String, completion: @escaping (String?, URL?) -> Void) {
+    func fetchMarketDetails(marketId: String, completion: @escaping (String?, URL?, Double?) -> Void) {
             let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-market?marketId=\(marketId)"
             guard let url = URL(string: urlString) else {
                 errorMessage = "Invalid URL"
@@ -233,17 +226,14 @@ class ProfileViewModel: ObservableObject {
                 }
 
                 do {
-                    
-                        if let jsonString = String(data: data, encoding: .utf8) {
-                            print("Raw JSON response: \(jsonString)")
-                        }
                     let decoder = JSONDecoder()
                     let marketDetail = try decoder.decode(MarketDetail.self, from: data)
                     
                     let title = marketDetail.market.topic
                     let imageUrl = marketDetail.market.image
-
-                    completion(title, imageUrl)
+                    let lastTradePrice = marketDetail.market.lastTradePrice
+                    
+                    completion(title, imageUrl, lastTradePrice)
                 } catch {
                     DispatchQueue.main.async { self.errorMessage = "Failed to decode market data: \(error.localizedDescription)" }
                 }
@@ -251,4 +241,42 @@ class ProfileViewModel: ObservableObject {
 
             task.resume()
     }
+    
+    /// Converts all `currentPositions` into `FormattedPosition`
+        private func updateFormattedPositions() {
+            formattedPositions = currentPositions.flatMap { formatPositionData(position: $0) }
+        }
+        
+    func formatPositionData(position: Position) -> [FormattedPosition] {
+        var formattedPositions: [FormattedPosition] = []
+
+        if let yesBalance = position.yesTokenBalance, yesBalance > 0  {
+            formattedPositions.append(FormattedPosition(
+                title: position.title,
+                image: position.image,
+                position: "Yes",
+                costBasis: position.yesTokenBalance,
+                totalInvested: position.yesCostBasis,
+                tokenBalance: 100,
+                price: position.lastTradePrice,
+                current: 1000
+            ))
+        }
+
+        if let noBalance = position.noTokenBalance, noBalance > 0 {
+            formattedPositions.append(FormattedPosition(
+                title: position.title,
+                image: position.image,
+                position: "No",
+                costBasis: position.noCostBasis,
+                totalInvested: 100,
+                tokenBalance: noBalance,
+                price: position.lastTradePrice,
+                current: 1000
+            ))
+        }
+
+        return formattedPositions
+    }
+
 }

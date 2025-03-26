@@ -61,7 +61,7 @@ struct ProfileDetailsView: View {
                     OpenOrdersView(viewModel: viewModel)
                         .padding()
                 } else {
-                    PositionsView(currentPositions: viewModel.currentPositions)
+                    PositionsView(viewModel: viewModel)
                         .padding()
                 }
                 Spacer()
@@ -170,11 +170,11 @@ struct OpenOrdersView: View {
 
 
 struct PositionsView: View {
-    let currentPositions: [Position] // Accepting currentPositions array from ViewModel
+    @ObservedObject var viewModel: ProfileViewModel
 
     var body: some View {
         ScrollView {
-            ForEach(currentPositions, id: \.title) { position in
+            ForEach(viewModel.formattedPositions, id: \.title) { position in
                 VStack(alignment: .leading) {
                     HStack(alignment: .top) {
                         AsyncImage(url: position.image) { phase in
@@ -199,19 +199,20 @@ struct PositionsView: View {
                         }
                         .padding(.trailing)
 
-                        Text(position.title)
+                        Text(position.title ?? "-")
                             .font(.headline)
                             .padding(.bottom)
                     }
                     .padding(.bottom)
 
                     HStack {
+                        
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("\(position.position)")
+                                Text("\(position.position ?? "-")")
                                     .font(.subheadline)
-                                    .foregroundColor(position.position.lowercased() == "yes" ? .green : .red)
-                                Text("\u{2192}  \(String(format: "%.2f", position.tokenBalance)) Shares")
+                                    .foregroundColor(position.position?.lowercased() == "yes" ? .green : .red)
+                                Text("\u{2192}  \(String(format: "%.2f", position.tokenBalance ?? 0)) Shares")
                                     .font(.subheadline)
                             }
                             .padding(.bottom, 4)
@@ -219,7 +220,7 @@ struct PositionsView: View {
                                 Text("Current: ")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("$\(String(format: "%.2f", position.current))")
+                                Text("$\(String(format: "%.2f", position.current ?? 0))")
                                     .font(.subheadline)
                             }
                         }
@@ -229,7 +230,7 @@ struct PositionsView: View {
                                 Text("Risked: ")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("$\(String(format: "%.2f", position.price))")
+                                Text("$\(String(format: "%.2f", position.price ?? 0))")
                                     .font(.subheadline)
                             }
                             .padding(.bottom, 4)
@@ -237,7 +238,7 @@ struct PositionsView: View {
                                 Text("To Win: ")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("$\(String(format: "%.2f", position.tokenBalance))")
+                                Text("$\(String(format: "%.2f", position.tokenBalance ?? 0))")
                                     .font(.subheadline)
                             }
                         }

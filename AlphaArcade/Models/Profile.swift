@@ -28,13 +28,36 @@ struct Order: Codable {
     let createdAt: Double?
 }
 
-struct Position: Codable {
-    let title: String
-    let image: URL
-    let position: String
-    let costBasis: Double // Position
-    let totalInvested: Double // Risk
-    let tokenBalance: Double // Shares/To win
-    let price: Double // latest
-    let current: Double
+
+
+struct PositionResponse: Codable {
+    let participants: [Position]
 }
+
+
+struct Position: Codable {
+    let marketId: String?
+    var title: String?
+    var image: URL?
+    var lastTradePrice: Double?
+    let yesTokenBalance: Double?
+    let noTokenBalance: Double?
+    let hasClaimed: Int?
+    let noCostBasis: Double?
+    let yesCostBasis: Double?
+    let createdAt: Double?
+    let totalInvested: Double?
+    let totalReturned: Double?
+}
+
+struct FormattedPosition: Codable {
+    let title: String?
+    let image: URL?
+    let position: String?
+    let costBasis: Double? // Position
+    let totalInvested: Double? // Risk
+    let tokenBalance: Double? // Shares/To win
+    let price: Double? // latest
+    let current: Double?
+}
+
