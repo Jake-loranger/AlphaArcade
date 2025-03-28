@@ -249,17 +249,23 @@ class ProfileViewModel: ObservableObject {
         
     func formatPositionData(position: Position) -> [FormattedPosition] {
         var formattedPositions: [FormattedPosition] = []
+        
+//        If position title is  != nil and != "Will the USA win the NHL 4 Nations Face-Off?"
+//         If there is no title, right now it means that it is a multiple opition market
+        guard let title = position.title, title != "Will the USA win the NHL 4 Nations Face-Off?" else {
+            return formattedPositions
+        }
 
         if let yesBalance = position.yesTokenBalance, yesBalance > 0  {
             formattedPositions.append(FormattedPosition(
                 title: position.title,
                 image: position.image,
                 position: "Yes",
-                costBasis: position.yesTokenBalance,
-                totalInvested: position.yesCostBasis,
-                tokenBalance: 100,
+                costBasis: position.yesCostBasis,
+                totalInvested: position.totalInvested,
+                tokenBalance: position.yesTokenBalance,
                 price: position.lastTradePrice,
-                current: 1000
+                current: (position.lastTradePrice ?? 0) * (position.yesCostBasis ?? 0)
             ))
         }
 
@@ -269,10 +275,10 @@ class ProfileViewModel: ObservableObject {
                 image: position.image,
                 position: "No",
                 costBasis: position.noCostBasis,
-                totalInvested: 100,
-                tokenBalance: noBalance,
+                totalInvested: position.totalInvested,
+                tokenBalance: position.noTokenBalance,
                 price: position.lastTradePrice,
-                current: 1000
+                current: (position.lastTradePrice ?? 0) * (position.noCostBasis ?? 0)
             ))
         }
 

@@ -174,7 +174,8 @@ struct PositionsView: View {
 
     var body: some View {
         ScrollView {
-            ForEach(viewModel.formattedPositions, id: \.title) { position in
+            ForEach(viewModel.formattedPositions.indices, id: \.self) { index in
+                let position = viewModel.formattedPositions[index]
                 VStack(alignment: .leading) {
                     HStack(alignment: .top) {
                         AsyncImage(url: position.image) { phase in
@@ -209,10 +210,10 @@ struct PositionsView: View {
                         
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("\(position.position ?? "-")")
+                                Text("\(position.position ?? "-") ¢\(String(format: "%.0f", (position.costBasis ?? 0)))")
                                     .font(.subheadline)
                                     .foregroundColor(position.position?.lowercased() == "yes" ? .green : .red)
-                                Text("\u{2192}  \(String(format: "%.2f", position.tokenBalance ?? 0)) Shares")
+                                Text("\u{2192}  \(String(format: "%.2f", (position.tokenBalance ?? 0) / 1000000)) Shares")
                                     .font(.subheadline)
                             }
                             .padding(.bottom, 4)
@@ -220,7 +221,7 @@ struct PositionsView: View {
                                 Text("Current: ")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("$\(String(format: "%.2f", position.current ?? 0))")
+                                Text("$\(String(format: "%.2f", (position.current ?? 0) / 1000000))")
                                     .font(.subheadline)
                             }
                         }
@@ -230,7 +231,7 @@ struct PositionsView: View {
                                 Text("Risked: ")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("$\(String(format: "%.2f", position.price ?? 0))")
+                                Text("$\(String(format: "%.2f", (position.totalInvested ?? 0) / 1000000))")
                                     .font(.subheadline)
                             }
                             .padding(.bottom, 4)
@@ -238,7 +239,7 @@ struct PositionsView: View {
                                 Text("To Win: ")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("$\(String(format: "%.2f", position.tokenBalance ?? 0))")
+                                Text("$\(String(format: "%.2f", (position.tokenBalance ?? 0) / 1000000))")
                                     .font(.subheadline)
                             }
                         }

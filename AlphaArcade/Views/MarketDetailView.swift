@@ -435,22 +435,29 @@ struct OrderButtonsView: View {
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 18/255, green: 197/255, blue: 208/255))
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(red: 18/255, green: 197/255, blue: 208/255))
+                            .shadow(color: Color(red: 18/255, green: 197/255, blue: 208/255, opacity: 0.8), radius: 100, x: 0, y: 0) // Glow effect
+                    )
                     .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            
+
             Button(action: { onSelect("No") }) {
                 Text("No")
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color(red: 204/255, green: 17/255, blue: 207/255))
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(red: 204/255, green: 17/255, blue: 207/255))
+                            .shadow(color: Color(red: 204/255, green: 17/255, blue: 207/255, opacity: 0.8), radius: 100, x: 0, y: 0) // Glow effect
+                    )
                     .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
-        .padding([.top, .leading, .trailing])
+        .padding([.leading, .trailing])
         .shadow(radius: 3)
+        .background(Color.clear)
     }
 }
