@@ -322,13 +322,10 @@ struct OrderSectionView: View {
                     Text("") // Empty column for alignment
                     Text(String(format: "$%.2f", Double(order.price) / 1000000.0))
                         .font(.system(size: 12))
-                        .foregroundColor(.white)
                     Text(String(format: "%.2f", Double(order.quantity) / 1000000.0))
                         .font(.system(size: 12))
-                        .foregroundColor(.white)
                     Text(String(format: "$%.2f", Double(order.total) / 1000000000000.0))
                         .font(.system(size: 12))
-                        .foregroundColor(.white)
                 }
                 .padding(.vertical, 4)
             }
