@@ -51,6 +51,7 @@ struct Position: Codable {
 }
 
 struct FormattedPosition: Codable {
+    let marketId: String?
     let title: String?
     let image: URL?
     let position: String?

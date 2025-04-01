@@ -258,6 +258,7 @@ class ProfileViewModel: ObservableObject {
 
         if let yesBalance = position.yesTokenBalance, yesBalance > 0  {
             formattedPositions.append(FormattedPosition(
+                marketId: position.marketId,
                 title: position.title,
                 image: position.image,
                 position: "Yes",
@@ -271,6 +272,7 @@ class ProfileViewModel: ObservableObject {
 
         if let noBalance = position.noTokenBalance, noBalance > 0 {
             formattedPositions.append(FormattedPosition(
+                marketId: position.marketId,
                 title: position.title,
                 image: position.image,
                 position: "No",
