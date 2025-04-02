@@ -24,6 +24,7 @@ struct ProfileView: View {
                     Text(currentWalletAddress.isEmpty ? "No Account" : currentWalletAddress)
                         .font(.largeTitle)
                         .bold()
+                        .truncationMode(.middle) 
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
