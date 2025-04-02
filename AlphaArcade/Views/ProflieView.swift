@@ -11,7 +11,7 @@ import SwiftUI
 struct ProfileView: View {
     
     @StateObject private var viewModel = ProfileViewModel()
-    @State private var currentWalletAddress: String = ""   // Active account selected from AccountSwitcherView
+    @State private var currentWalletAddress: String = UserDefaults.standard.string(forKey: "ActiveAccount") ?? ""
     @State private var showAccountSwitcher: Bool = false
     
     var body: some View {
@@ -40,10 +40,22 @@ struct ProfileView: View {
                     }
                 }
             }
-            // Update the view model when the active account changes
-            .onChange(of: currentWalletAddress) { newAccount in
-                viewModel.fetchWalletDetails(walletInput: newAccount)
+            
+            .onAppear {
+                // Load the active account when the view appears
+                currentWalletAddress = UserDefaults.standard.string(forKey: "ActiveAccount") ?? ""
+                viewModel.fetchWalletDetails(walletInput: currentWalletAddress)
             }
+            .onChange(of: currentWalletAddress) { newAccount in
+                // Save the new active account to UserDefaults
+                UserDefaults.standard.set(newAccount, forKey: "ActiveAccount")
+                viewModel.fetchWalletDetails(walletInput: newAccount)
+                print(UserDefaults.standard.dictionaryRepresentation())
+            }
+        }
+        .refreshable {
+            viewModel.fetchOpenOrders()
+            viewModel.fetchParticipantData()
         }
     }
 }
@@ -55,12 +67,13 @@ struct AccountSwitcherView: View {
     @State private var newAccount: String = ""
     @State private var showingAddAccountSheet = false
     
-    // Access the presentation mode so we can dismiss the view on selection.
+    // Access the presentation mode to dismiss the view
     @Environment(\.presentationMode) private var presentationMode
     
     // UserDefaults key for storing accounts
     private let accountsKey = "StoredAccounts"
-    
+    private let activeAccountKey = "ActiveAccount"
+
     var body: some View {
         NavigationView {
             VStack {
@@ -68,9 +81,7 @@ struct AccountSwitcherView: View {
                     // Display each account loaded from local storage.
                     ForEach(availableAccounts, id: \.self) { account in
                         Button(action: {
-                            currentWalletAddress = account
-                            // Dismiss the AccountSwitcherView once an account is selected.
-                            presentationMode.wrappedValue.dismiss()
+                            setActiveAccount(account)
                         }) {
                             HStack {
                                 Text(account)
@@ -81,8 +92,12 @@ struct AccountSwitcherView: View {
                             }
                         }
                     }
-                    // Enable deletion of accounts.
-                    .onDelete(perform: deleteAccounts)
+                    .onDelete { indexSet in
+                        indexSet.forEach { index in
+                            let accountToDelete = availableAccounts[index]
+                            deleteAccount(accountToDelete) // Call the delete function
+                        }
+                    }
                 }
                 .listStyle(PlainListStyle())
                 
@@ -97,69 +112,94 @@ struct AccountSwitcherView: View {
                 .padding()
                 .sheet(isPresented: $showingAddAccountSheet) {
                     VStack(spacing: 20) {
-                        Text("Add New Account")
+                        Spacer()
+                        
+                        Text("Add an Account")
                             .font(.headline)
                         
-                        TextField("Enter account", text: $newAccount)
+                        TextField("Enter Address or NFD", text: $newAccount)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.horizontal)
                         
                         Button("Save") {
                             guard !newAccount.isEmpty else { return }
-                            // Append the new account, update the active account,
-                            // save to UserDefaults, and then dismiss the add account sheet.
-                            availableAccounts.append(newAccount)
-                            currentWalletAddress = newAccount
-                            saveAccounts()
+                            saveAccount(newAccount)
+                            setActiveAccount(newAccount)
                             newAccount = ""
                             showingAddAccountSheet = false
-                            
-                            // Optionally dismiss the entire AccountSwitcherView after saving.
-                            presentationMode.wrappedValue.dismiss()
                         }
                         .padding()
                         
                         Spacer()
                     }
                     .padding()
-                    .presentationDetents([.medium])
+                    .presentationDetents([.fraction(0.3)])  // Adjust height to 30% of screen
                     .presentationDragIndicator(.visible)
                 }
             }
-            .navigationBarTitle("Account Switcher", displayMode: .inline)
+            .navigationBarTitle("Switch Accounts", displayMode: .inline)
             .onAppear(perform: loadAccounts)
         }
+        .presentationDetents([.fraction(0.4)])
+        .presentationDragIndicator(.visible)
     }
     
-    // Loads accounts from UserDefaults or initializes with an empty array.
+    // Load accounts from UserDefaults
     private func loadAccounts() {
         if let storedAccounts = UserDefaults.standard.array(forKey: accountsKey) as? [String] {
             availableAccounts = storedAccounts
         } else {
             availableAccounts = []
-            saveAccounts()
         }
     }
     
-    // Saves the current account list to UserDefaults.
-    private func saveAccounts() {
-        UserDefaults.standard.set(availableAccounts, forKey: accountsKey)
+    private func saveAccount(_ account: String) {
+        // Load the existing accounts from UserDefaults
+        var storedAccounts = UserDefaults.standard.array(forKey: accountsKey) as? [String] ?? []
+        
+        // Append the new account if it’s not already in the list
+        if !storedAccounts.contains(account) {
+            storedAccounts.append(account)
+        }
+        
+        // Save the updated list back to UserDefaults
+        UserDefaults.standard.set(storedAccounts, forKey: accountsKey)
+        
+        // Update the local availableAccounts variable
+        availableAccounts = storedAccounts
+        
+        
+        print(UserDefaults.standard.dictionaryRepresentation())
     }
     
-    // Deletes accounts from the list and updates UserDefaults.
-    private func deleteAccounts(at offsets: IndexSet) {
-        // Remove the accounts from the array.
-        for index in offsets {
-            let accountToDelete = availableAccounts[index]
-            // If the deleted account is the active one, clear it or update it as needed.
-            if accountToDelete == currentWalletAddress {
-                currentWalletAddress = ""
-            }
+    private func deleteAccount(_ account: String) {
+        // Load the existing accounts from UserDefaults
+        var storedAccounts = UserDefaults.standard.array(forKey: accountsKey) as? [String] ?? []
+        
+        // Remove the specified account
+        storedAccounts.removeAll { $0 == account }
+        
+        // Save the updated list back to UserDefaults
+        UserDefaults.standard.set(storedAccounts, forKey: accountsKey)
+        
+        // Update the local availableAccounts variable
+        availableAccounts = storedAccounts
+        
+        // If the deleted account was the active one, clear it
+        if currentWalletAddress == account {
+            currentWalletAddress = ""
+            UserDefaults.standard.removeObject(forKey: "ActiveAccount")
         }
-        availableAccounts.remove(atOffsets: offsets)
-        saveAccounts()
+    }
+
+    // Set and persist the active account
+    private func setActiveAccount(_ account: String) {
+        currentWalletAddress = account
+        UserDefaults.standard.set(account, forKey: activeAccountKey)
+        presentationMode.wrappedValue.dismiss()
     }
 }
+
 
 
 
@@ -299,7 +339,6 @@ struct PositionsView: View {
         ScrollView {
             ForEach(viewModel.formattedPositions.indices, id: \.self) { index in
                 let position = viewModel.formattedPositions[index]
-                NavigationLink(destination: MarketDetailView(market: position.marketId ?? "")) {
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
                             AsyncImage(url: position.image) { phase in
@@ -373,7 +412,7 @@ struct PositionsView: View {
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(10)
                 }
-            }
+            
         }
     }
 }
