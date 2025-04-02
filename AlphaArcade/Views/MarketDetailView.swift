@@ -9,25 +9,26 @@ import SwiftUI
 import Charts
 
 struct MarketDetailView: View {
-    let market: Market
+    let marketId: String?
+    let market: Market?
+
     @StateObject private var viewModel = MarketDetailViewModel()
     @State private var showOrderView = false
-    @State private var selectedOption: String? = "yes"
+    @State private var selectedOption: String? = "Yes"
 
     var body: some View {
         VStack {
             if viewModel.isLoading {
                 ProgressView()
-            } else if viewModel.marketDetails != nil && viewModel.marketComments != nil {
+            } else if let marketDetails = viewModel.marketDetails, let marketComments = viewModel.marketComments {
                 ScrollView {
                     VStack(alignment: .leading) {
-                        MarketTitleView(title: market.title, image: market.image)
-                        MarketChartView(matches: viewModel.marketDetails?.matches ,yesProb: viewModel.marketDetails?.market.yesProb, noProb: viewModel.marketDetails?.market.noProb)
-                        MarketInfoView(volume: viewModel.marketDetails?.market.volume ?? 0, marketVolume: viewModel.marketDetails?.market.marketVolume ?? 0, fees: viewModel.marketDetails?.market.fees ?? 0, date: viewModel.marketDetails?.market.createdAtDate)
-                        MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: viewModel.marketDetails?.market)
-
-                        MarketRulesView(market: market)
-                        MarketCommentsView(marketComments: viewModel.marketComments ?? nil)
+                        MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
+                        MarketChartView(matches: marketDetails.matches, yesProb: marketDetails.market.yesProb, noProb: marketDetails.market.noProb)
+                        MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
+                        MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
+                        MarketRulesView(market: marketDetails.market)
+                        MarketCommentsView(marketComments: marketComments)
                     }
                     .padding()
                 }
@@ -43,14 +44,28 @@ struct MarketDetailView: View {
             }
         }
         .onAppear {
-            viewModel.fetchMarketDetails(marketId: market.id ?? "")
-            viewModel.fetchComments(marketId: market.id ?? "")
-            viewModel.fetchOrderbook(marketId: market.id ?? "")
+            if let market = market {
+                // If market is already provided, use its ID
+                viewModel.fetchMarketDetails(marketId: market.id ?? "")
+                viewModel.fetchComments(marketId: market.id ?? "")
+                viewModel.fetchOrderbook(marketId: market.id ?? "")
+            } else if let marketId = marketId {
+                // If only marketId is available, fetch data from API
+                viewModel.fetchMarketDetails(marketId: marketId)
+                viewModel.fetchComments(marketId: marketId)
+                viewModel.fetchOrderbook(marketId: marketId)
+            }
         }
         .refreshable {
-            viewModel.fetchMarketDetails(marketId: market.id ?? "")
-            viewModel.fetchComments(marketId: market.id ?? "")
-            viewModel.fetchOrderbook(marketId: market.id ?? "")
+            if let market = market {
+                viewModel.fetchMarketDetails(marketId: market.id ?? "")
+                viewModel.fetchComments(marketId: market.id ?? "")
+                viewModel.fetchOrderbook(marketId: market.id ?? "")
+            } else if let marketId = marketId {
+                viewModel.fetchMarketDetails(marketId: marketId)
+                viewModel.fetchComments(marketId: marketId)
+                viewModel.fetchOrderbook(marketId: marketId)
+            }
         }
         .sheet(isPresented: $showOrderView) {
             if let option = selectedOption {
@@ -60,6 +75,7 @@ struct MarketDetailView: View {
         }
     }
 }
+
 
 
 

@@ -33,7 +33,7 @@ struct MarketView: View {
                 if !activeMarkets.isEmpty {
                     Section(header: Text("Active")) {
                         ForEach(activeMarkets) { market in
-                            NavigationLink(destination: MarketDetailView(market: market)) {
+                            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
                                 CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
                             }
                         }
@@ -43,7 +43,7 @@ struct MarketView: View {
                 if !resolvedMarkets.isEmpty {
                     Section(header: Text("Resolved")) {
                         ForEach(resolvedMarkets) { market in
-                            NavigationLink(destination: MarketDetailView(market: market)) {
+                            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
                                 CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
                             }
                         }
