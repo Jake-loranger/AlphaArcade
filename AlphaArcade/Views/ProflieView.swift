@@ -295,7 +295,6 @@ struct OpenOrdersView: View {
                                         .foregroundColor(order.orderSide?.lowercased() == "buy" ? .green : .red)
                                     Text(order.orderPosition == 1 ? "\u{2192} Yes" : "\u{2192} No")
                                         .font(.subheadline)
-                                        .foregroundColor(.white)
                                 }
                                 .padding(.bottom, 4)
                                 HStack {
@@ -327,7 +326,7 @@ struct OpenOrdersView: View {
                         }
                     }
                     .padding()
-                    .background(Color.gray.opacity(0.1))
+                    .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -417,7 +416,7 @@ struct PositionsView: View {
                         }
                     }
                     .padding()
-                    .background(Color.gray.opacity(0.1))
+                    .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(10)
                 }
             }
