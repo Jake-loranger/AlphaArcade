@@ -86,6 +86,8 @@ struct AccountSwitcherView: View {
                         }) {
                             HStack {
                                 Text(account)
+                                    .lineLimit(1) 
+                                    .truncationMode(.middle)
                                 Spacer()
                                 if account == currentWalletAddress {
                                     Image(systemName: "checkmark")
