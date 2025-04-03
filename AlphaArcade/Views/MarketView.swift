@@ -7,21 +7,6 @@
 
 import SwiftUI
 
-
-/// Decodes API response while filtering out invalid data
-struct MarketResponse: Codable {
-    let markets: [Market]
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let rawMarkets = try container.decode([Market?].self, forKey: .markets)
-        
-        // Remove any markets that are nil (invalid data)
-        self.markets = rawMarkets.compactMap { $0 }
-    }
-}
-
-
 struct MarketView: View {
     @State private var activeMarkets: [Market] = []
     @State private var resolvedMarkets: [Market] = []
@@ -33,7 +18,7 @@ struct MarketView: View {
                 if !activeMarkets.isEmpty {
                     Section(header: Text("Active")) {
                         ForEach(activeMarkets) { market in
-                            NavigationLink(destination: MarketDetailView(market: market)) {
+                            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
                                 CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
                             }
                         }
@@ -43,7 +28,7 @@ struct MarketView: View {
                 if !resolvedMarkets.isEmpty {
                     Section(header: Text("Resolved")) {
                         ForEach(resolvedMarkets) { market in
-                            NavigationLink(destination: MarketDetailView(market: market)) {
+                            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
                                 CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
                             }
                         }
@@ -53,7 +38,12 @@ struct MarketView: View {
             .refreshable {
                 await fetchMarketData()
             }
-            .navigationTitle("Markets")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("Markets") // This can be the static title
+                        .font(.largeTitle)
+                        .bold()                        }
+            }
         }
         .task {
             await fetchMarketData()

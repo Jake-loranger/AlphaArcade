@@ -38,7 +38,6 @@ class MarketDetailViewModel: ObservableObject {
             }
             
             do {
-                // Decode the data into the MarketDetail struct
                 let decoder = JSONDecoder()
                 let marketDetail = try decoder.decode(MarketDetail.self, from: data)
                 
@@ -130,10 +129,6 @@ class MarketDetailViewModel: ObservableObject {
                         self.errorMessage = "No data received"
                     }
                     return
-                }
-
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Raw JSON data: \(jsonString)")
                 }
 
                 do {
