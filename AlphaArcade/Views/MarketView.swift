@@ -7,21 +7,6 @@
 
 import SwiftUI
 
-
-/// Decodes API response while filtering out invalid data
-struct MarketResponse: Codable {
-    let markets: [Market]
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let rawMarkets = try container.decode([Market?].self, forKey: .markets)
-        
-        // Remove any markets that are nil (invalid data)
-        self.markets = rawMarkets.compactMap { $0 }
-    }
-}
-
-
 struct MarketView: View {
     @State private var activeMarkets: [Market] = []
     @State private var resolvedMarkets: [Market] = []

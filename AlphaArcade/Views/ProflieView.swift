@@ -24,7 +24,9 @@ struct ProfileView: View {
                     Text(currentWalletAddress.isEmpty ? "No Account" : currentWalletAddress)
                         .font(.largeTitle)
                         .bold()
-                        .truncationMode(.middle) 
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .frame(maxWidth: 350, alignment: .leading)
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
@@ -33,7 +35,7 @@ struct ProfileView: View {
                     }) {
                         Image(systemName: "person.circle.fill")
                             .resizable()
-                            .frame(width: 35, height: 35)
+                            .frame(width: 30, height: 30)
                             .foregroundColor(.blue)
                     }
                     .sheet(isPresented: $showAccountSwitcher) {
@@ -57,6 +59,7 @@ struct ProfileView: View {
         .refreshable {
             viewModel.fetchOpenOrders()
             viewModel.fetchParticipantData()
+            viewModel.fetchWalletMetrics()
         }
     }
 }
@@ -213,10 +216,26 @@ struct ProfileDetailsView: View {
     @State private var selectedTab = "Positions"
 
     var body: some View {
-        VStack {
+        ScrollView {
+            
+            
+            
             if viewModel.isLoading {
                 ProgressView()
             } else {
+                LazyVGrid(columns: [
+                            GridItem(.flexible(), spacing: 16),
+                            GridItem(.flexible(), spacing: 16)
+                ], alignment: .leading, spacing: 16) {
+                    InfoItem(title: "Net Profit", value: "$\(formattedValue(viewModel.walletMetrics?.netProfit))")
+                    InfoItem(title: "Current Value", value: "$\(formattedValue(viewModel.walletMetrics?.currentPortfolioValue))")
+                    InfoItem(title: "Win Rate", value: formattedWinRate())
+                    InfoItem(title: "Total Volume", value: formattedTotalVolume())
+                }
+                .padding()
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                
                 Picker("Select", selection: $selectedTab) {
                     Text("Positions").tag("Positions")
                     Text("Orders").tag("Orders")
@@ -247,7 +266,32 @@ struct ProfileDetailsView: View {
             )
         }
     }
+    
+    // Helper to format a numeric value safely (either Optional or non-Optional)
+        private func formattedValue(_ value: Double?) -> String {
+            guard let value = value else {
+                return "N/A" // You can customize this fallback text
+            }
+            return String(format: "%.2f", value) // Format to 2 decimal places
+        }
+    
+    // Helper to calculate win rate
+        private func formattedWinRate() -> String {
+            let winningTrades = viewModel.walletMetrics?.winningTrades ?? 0
+            let totalTrades = viewModel.walletMetrics?.totalTrades ?? 1 // Avoid division by zero
+            let winRate = totalTrades > 0 ? Double(winningTrades) / Double(totalTrades) : 0
+            return String(format: "%.2f", winRate * 100) + "%" // Display as percentage
+        }
+        
+        // Helper to calculate gross amount sold + bought
+        private func formattedTotalVolume() -> String {
+            let grossAmountSold = viewModel.walletMetrics?.grossAmountSold ?? 0
+            let grossAmountBought = viewModel.walletMetrics?.grossAmountBought ?? 0
+            return "$" + String(format: "%.2f", grossAmountSold + grossAmountBought)
+        }
 }
+
+
 
 struct OpenOrdersView: View {
 
