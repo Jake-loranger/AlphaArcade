@@ -406,88 +406,101 @@ struct OpenOrdersView: View {
 
 struct PositionsView: View {
     @ObservedObject var viewModel: ProfileViewModel
-
+    
     var body: some View {
-        ScrollView {
-            ForEach(viewModel.formattedPositions.indices, id: \.self) { index in
-                let position = viewModel.formattedPositions[index]
-                
-                NavigationLink(destination: MarketDetailView(marketId: position.marketId ?? "", market: nil)) {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top) {
-                            AsyncImage(url: position.image) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(width: 50, height: 50)
-                                case .success(let image):
-                                    image.resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                case .failure:
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.gray)
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
-                            .padding(.trailing)
-                            
-                            Text(position.title ?? "-")
-                                .font(.headline)
-                                .padding(.bottom)
-                        }
-                        .padding(.bottom)
-                        
-                        HStack {
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text("\(position.position ?? "-") ¢\(String(format: "%.0f", (position.costBasis ?? 0)))")
-                                        .font(.subheadline)
-                                        .foregroundColor(position.position?.lowercased() == "yes" ? .green : .red)
-                                    Text("\u{2192}  \(String(format: "%.2f", (position.tokenBalance ?? 0) / 1000000)) Shares")
-                                        .font(.subheadline)
-                                }
-                                .padding(.bottom, 4)
-                                HStack {
-                                    Text("Current: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (position.current ?? 0) / 1000000))")
-                                        .font(.subheadline)
-                                }
-                            }
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text("Risked: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (position.totalInvested ?? 0) / 1000000))")
-                                        .font(.subheadline)
-                                }
-                                .padding(.bottom, 4)
-                                HStack {
-                                    Text("To Win: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (position.tokenBalance ?? 0) / 1000000))")
-                                        .font(.subheadline)
-                                }
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(10)
-                }
+        
+        if viewModel.formattedPositions.isEmpty {
+            VStack {
+                Spacer()
+                Text("No Positions")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.top, 20)
+                Spacer()
             }
-            .buttonStyle(PlainButtonStyle())
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                ForEach(viewModel.formattedPositions.indices, id: \.self) { index in
+                    let position = viewModel.formattedPositions[index]
+                    
+                    NavigationLink(destination: MarketDetailView(marketId: position.marketId ?? "", market: nil)) {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top) {
+                                AsyncImage(url: position.image) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                            .frame(width: 50, height: 50)
+                                    case .success(let image):
+                                        image.resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50, height: 50)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    case .failure:
+                                        Image(systemName: "photo")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50, height: 50)
+                                            .foregroundColor(.gray)
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                                .padding(.trailing)
+                                
+                                Text(position.title ?? "-")
+                                    .font(.headline)
+                                    .padding(.bottom)
+                            }
+                            .padding(.bottom)
+                            
+                            HStack {
+                                
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text("\(position.position ?? "-") ¢\(String(format: "%.0f", (position.costBasis ?? 0)))")
+                                            .font(.subheadline)
+                                            .foregroundColor(position.position?.lowercased() == "yes" ? .green : .red)
+                                        Text("\u{2192}  \(String(format: "%.2f", (position.tokenBalance ?? 0) / 1000000)) Shares")
+                                            .font(.subheadline)
+                                    }
+                                    .padding(.bottom, 4)
+                                    HStack {
+                                        Text("Current: ")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        Text("$\(String(format: "%.2f", (position.current ?? 0) / 1000000))")
+                                            .font(.subheadline)
+                                    }
+                                }
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text("Risked: ")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        Text("$\(String(format: "%.2f", (position.totalInvested ?? 0) / 1000000))")
+                                            .font(.subheadline)
+                                    }
+                                    .padding(.bottom, 4)
+                                    HStack {
+                                        Text("To Win: ")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        Text("$\(String(format: "%.2f", (position.tokenBalance ?? 0) / 1000000))")
+                                            .font(.subheadline)
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(10)
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
         }
     }
 }
