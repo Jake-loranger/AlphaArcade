@@ -17,40 +17,44 @@ struct MarketDetailView: View {
     @State private var selectedOption: String? = "Yes"
 
     var body: some View {
-        VStack {
-            if viewModel.isLoading {
-                ProgressView()
-            } else if let marketDetails = viewModel.marketDetails, let marketComments = viewModel.marketComments {
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
-                        MarketChartView(matches: marketDetails.matches, yesProb: marketDetails.market.yesProb, noProb: marketDetails.market.noProb)
-                        MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
-                        MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
-                        MarketRulesView(market: marketDetails.market)
-                        MarketCommentsView(marketComments: marketComments)
+        ZStack(alignment: .bottom) {
+            VStack {
+                if viewModel.isLoading {
+                    ProgressView()
+                } else if let marketDetails = viewModel.marketDetails,
+                          let marketComments = viewModel.marketComments {
+                    ScrollView {
+                        VStack(alignment: .leading) {
+                            MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
+                            MarketChartView(matches: marketDetails.matches, yesProb: marketDetails.market.yesProb, noProb: marketDetails.market.noProb)
+                            MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
+                            MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
+                            MarketRulesView(market: marketDetails.market)
+                            MarketCommentsView(marketComments: marketComments)
+                        }
+                        .padding(.bottom, 100) // Make room for sticky button
+                        .padding(.horizontal)
                     }
-                    .padding()
+                } else if let error = viewModel.errorMessage {
+                    Text(error).foregroundColor(.red)
                 }
-            } else if let error = viewModel.errorMessage {
-                Text(error).foregroundColor(.red)
             }
-            
+
+            // Sticky button view on top
             OrderButtonsView { option in
                 selectedOption = option
-                DispatchQueue.main.async {
+                withAnimation {
                     showOrderView = true
                 }
             }
+            .padding(.bottom)
         }
         .onAppear {
             if let market = market {
-                // If market is already provided, use its ID
                 viewModel.fetchMarketDetails(marketId: market.id ?? "")
                 viewModel.fetchComments(marketId: market.id ?? "")
                 viewModel.fetchOrderbook(marketId: market.id ?? "")
             } else if let marketId = marketId {
-                // If only marketId is available, fetch data from API
                 viewModel.fetchMarketDetails(marketId: marketId)
                 viewModel.fetchComments(marketId: marketId)
                 viewModel.fetchOrderbook(marketId: marketId)
@@ -75,9 +79,6 @@ struct MarketDetailView: View {
         }
     }
 }
-
-
-
 
 struct MarketTitleView: View {
     let title: String?
@@ -394,17 +395,25 @@ struct MarketCommentsView: View {
 
             // Comments List
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(marketComments!, id: \.senderWallet) { comment in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(comment.senderWallet ?? "--")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(Color.gray)
+                if let comments = marketComments, !comments.isEmpty {
+                        ForEach(comments, id: \.senderWallet) { comment in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(comment.senderWallet ?? "--")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(Color.gray)
 
-                        Text(comment.text ?? "--")
+                                Text(comment.text ?? "--")
+                                    .font(.system(size: 14))
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    } else {
+                        Text("None")
+                            .foregroundColor(.gray)
                             .font(.system(size: 14))
+                            .italic()
+                            .padding(.vertical, 8)
                     }
-                    .padding(.vertical, 4)
-                }
             }
         }
         .padding()
@@ -442,30 +451,42 @@ struct OrderButtonsView: View {
         HStack(spacing: 16) { // Add spacing between buttons
             Button(action: { onSelect("Yes") }) {
                 Text("Yes")
+                    .font(.title2)
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(red: 18/255, green: 197/255, blue: 208/255))
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color(red: 51/255, green: 91/255, blue: 97/255))
                     )
-                    .foregroundColor(.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Color(red: 109/255, green: 239/255, blue: 252/255), lineWidth: 1)
+                    )
+                    .foregroundColor(Color.white)
+                    .shadow(color: Color(red: 109/255, green: 239/255, blue: 252/255).opacity(0.5), radius: 8)
             }
 
             Button(action: { onSelect("No") }) {
                 Text("No")
+                    .font(.title2)
                     .bold()
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(red: 204/255, green: 17/255, blue: 207/255))
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color(red: 89/255, green: 38/255, blue: 96/255))
                     )
-                    .foregroundColor(.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(Color(red: 234/255, green: 63/255, blue: 247/255), lineWidth: 1)
+                    )
+                    .foregroundColor(Color.white)
+                    .shadow(color: Color(red: 234/255, green: 63/255, blue: 247/255).opacity(0.5), radius: 8)
             }
         }
         .padding([.leading, .trailing])
-        .shadow(radius: 3)
-        .background(Color.clear)
+        .shadow(color: Color.black, radius: 50, x: 0, y: 20)
+
     }
 }

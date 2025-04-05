@@ -16,7 +16,7 @@ struct MarketView: View {
         NavigationStack {
             List {
                 if !activeMarkets.isEmpty {
-                    Section(header: Text("Active")) {
+                    Section(header: Text("Active Markets")) {
                         ForEach(activeMarkets) { market in
                             NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
                                 CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
@@ -26,7 +26,7 @@ struct MarketView: View {
                 }
                 
                 if !resolvedMarkets.isEmpty {
-                    Section(header: Text("Resolved")) {
+                    Section(header: Text("Resolved Markets")) {
                         ForEach(resolvedMarkets) { market in
                             NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
                                 CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
@@ -40,9 +40,12 @@ struct MarketView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Text("Markets") // This can be the static title
-                        .font(.largeTitle)
-                        .bold()                        }
+                        Image("HorizontalLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 42)
+                            .padding([.leading, .bottom], 8)
+                    }
             }
         }
         .task {
