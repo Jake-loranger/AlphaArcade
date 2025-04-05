@@ -241,7 +241,7 @@ struct ProfileDetailsView: View {
                     Text("Orders").tag("Orders")
                 }
                 .pickerStyle(.segmented)
-                .padding([.top, .leading, .trailing])
+                .padding([.leading, .trailing])
                 
                 if selectedTab == "Orders" {
                     OpenOrdersView(viewModel: viewModel)
@@ -267,113 +267,136 @@ struct ProfileDetailsView: View {
         }
     }
     
-    // Helper to format a numeric value safely (either Optional or non-Optional)
-        private func formattedValue(_ value: Double?) -> String {
-            guard let value = value else {
-                return "N/A" // You can customize this fallback text
-            }
-            return String(format: "%.2f", value) // Format to 2 decimal places
+    // General-purpose formatter
+    private func formattedValue(_ value: Double?) -> String {
+        guard let value = value else {
+            return "N/A"
         }
-    
-    // Helper to calculate win rate
-        private func formattedWinRate() -> String {
-            let winningTrades = viewModel.walletMetrics?.winningTrades ?? 0
-            let totalTrades = viewModel.walletMetrics?.totalTrades ?? 1 // Avoid division by zero
-            let winRate = totalTrades > 0 ? Double(winningTrades) / Double(totalTrades) : 0
-            return String(format: "%.2f", winRate * 100) + "%" // Display as percentage
-        }
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+        return formatter.string(from: NSNumber(value: value)) ?? "N/A"
+    }
+
+    // Formats the win rate as a percentage with 2 decimal places
+    private func formattedWinRate() -> String {
+        let winningTrades = viewModel.walletMetrics?.winningTrades ?? 0
+        let totalTrades = viewModel.walletMetrics?.totalTrades ?? 1
+        let winRate = Double(winningTrades) / Double(totalTrades)
+        return String(format: "%.2f%%", winRate * 100)
+    }
+
+    // Formats total volume as a currency with comma separation
+    private func formattedTotalVolume() -> String {
+        let grossAmountSold = viewModel.walletMetrics?.grossAmountSold ?? 0
+        let grossAmountBought = viewModel.walletMetrics?.grossAmountBought ?? 0
+        let totalVolume = grossAmountSold + grossAmountBought
         
-        // Helper to calculate gross amount sold + bought
-        private func formattedTotalVolume() -> String {
-            let grossAmountSold = viewModel.walletMetrics?.grossAmountSold ?? 0
-            let grossAmountBought = viewModel.walletMetrics?.grossAmountBought ?? 0
-            return "$" + String(format: "%.2f", grossAmountSold + grossAmountBought)
-        }
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = "$"
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+        return formatter.string(from: NSNumber(value: totalVolume)) ?? "$0.00"
+    }
 }
 
 
 
 struct OpenOrdersView: View {
-
+    
     @ObservedObject var viewModel: ProfileViewModel
-
+    
     var body: some View {
-        ScrollView {
-            ForEach(viewModel.openOrders, id: \.marketId) { order in
-                NavigationLink(destination: MarketDetailView(marketId: order.marketId ?? "", market: nil)) {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top) {
-                            AsyncImage(url: order.image) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(width: 50, height: 50)
-                                case .success(let image):
-                                    image.resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                case .failure:
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 50, height: 50)
-                                        .foregroundColor(.gray)
-                                @unknown default:
-                                    EmptyView()
+        if viewModel.openOrders.isEmpty {
+            VStack {
+                Spacer()
+                Text("No Open Orders")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.top, 20)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                ForEach(viewModel.openOrders, id: \.marketId) { order in
+                    NavigationLink(destination: MarketDetailView(marketId: order.marketId ?? "", market: nil)) {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top) {
+                                AsyncImage(url: order.image) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                            .frame(width: 50, height: 50)
+                                    case .success(let image):
+                                        image.resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50, height: 50)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    case .failure:
+                                        Image(systemName: "photo")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 50, height: 50)
+                                            .foregroundColor(.gray)
+                                    @unknown default:
+                                        EmptyView()
+                                    }
                                 }
+                                .padding(.trailing)
+                                
+                                Text(order.title ?? "--")
+                                    .font(.headline)
+                                    .padding(.bottom)
                             }
-                            .padding(.trailing)
+                            .padding(.bottom)
                             
-                            Text(order.title ?? "--")
-                                .font(.headline)
-                                .padding(.bottom)
-                        }
-                        .padding(.bottom)
-                        
-                        HStack {
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text(order.orderSide ?? "--")
-                                        .font(.subheadline)
-                                        .foregroundColor(order.orderSide?.lowercased() == "buy" ? .green : .red)
-                                    Text(order.orderPosition == 1 ? "\u{2192} Yes" : "\u{2192} No")
-                                        .font(.subheadline)
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text(order.orderSide ?? "--")
+                                            .font(.subheadline)
+                                            .foregroundColor(order.orderSide?.lowercased() == "buy" ? .green : .red)
+                                        Text(order.orderPosition == 1 ? "\u{2192} Yes" : "\u{2192} No")
+                                            .font(.subheadline)
+                                    }
+                                    .padding(.bottom, 4)
+                                    HStack {
+                                        Text("Filled: ")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        Text("\(String(format: "%.2f", (order.orderQuantityFilled ?? 0) / 10000))%")
+                                            .font(.subheadline)
+                                    }
                                 }
-                                .padding(.bottom, 4)
-                                HStack {
-                                    Text("Filled: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("\(String(format: "%.2f", (order.orderQuantityFilled ?? 0) / 10000))%")
-                                        .font(.subheadline)
-                                }
-                            }
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Text("Price: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (order.orderPrice ?? 0) / 1000000))")
-                                        .font(.subheadline)
-                                }
-                                .padding(.bottom, 4)
-                                HStack {
-                                    Text("Total: ")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                    Text("$\(String(format: "%.2f", (order.orderQuantity ?? 0) * (order.orderPrice ?? 0) / 1000000000000))")
-                                        .font(.subheadline)
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        Text("Price: ")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        Text("$\(String(format: "%.2f", (order.orderPrice ?? 0) / 1000000))")
+                                            .font(.subheadline)
+                                    }
+                                    .padding(.bottom, 4)
+                                    HStack {
+                                        Text("Total: ")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                        Text("$\(String(format: "%.2f", (order.orderQuantity ?? 0) * (order.orderPrice ?? 0) / 1000000000000))")
+                                            .font(.subheadline)
+                                    }
                                 }
                             }
                         }
+                        .padding()
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(10)
                     }
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(10)
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
             }
         }
     }
