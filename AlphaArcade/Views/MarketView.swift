@@ -106,10 +106,13 @@ struct MarketItemView: View {
             .padding(.vertical, 5)
             
             HStack {
-                Text("14 Mar, 2025")
+                Text("$\(DataFormatter.formattedValue(market.volume ?? 0)) Vol.")
                     .font(.caption)
                 Spacer()
-                Text("$\(DataFormatter.formattedValue(market.volume ?? 0)) Vol.")
+                Image(systemName: "bubble.left")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                Text("\(market.comments ?? 0) ")
                     .font(.caption)
             }
             .padding(.vertical, 5)

@@ -41,6 +41,8 @@ struct Market: Identifiable, Codable {
     let marketVolume: Double?
     let fees: Double?
     let createdAt: Int?
+    let endTs: Int?
+    let comments: Int?
     let rules: String?
     let currentSpread: Double?
     let lastTradePrice: Double?

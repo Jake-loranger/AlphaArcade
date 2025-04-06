@@ -38,4 +38,20 @@ struct DataFormatter {
         formatter.minimumFractionDigits = 2
         return formatter.string(from: NSNumber(value: totalVolume)) ?? "$0.00"
     }
+    
+    static func formatTimestampToDate(_ timestampMilliseconds: Int) -> String {
+        // Convert the milliseconds to seconds
+        let timestampSeconds = TimeInterval(timestampMilliseconds) / 1000
+        
+        // Create a Date object
+        let date = Date(timeIntervalSince1970: timestampSeconds)
+        
+        // Create a DateFormatter to format the date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy"  // Desired format: "DD MMM YYYY"
+        let formattedDate = dateFormatter.string(from: date)
+        
+        return formattedDate
+    }
+
 }
