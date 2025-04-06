@@ -19,17 +19,7 @@ struct MarketView: View {
                     Section(header: Text("Active Markets")) {
                         ForEach(activeMarkets) { market in
                             NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
-                                CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
-                            }
-                        }
-                    }
-                }
-                
-                if !resolvedMarkets.isEmpty {
-                    Section(header: Text("Resolved Markets")) {
-                        ForEach(resolvedMarkets) { market in
-                            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
-                                CustomItemView(title: market.title ?? "N/A", imageUrl: market.image)
+                                MarketItemView(market: market)
                             }
                         }
                     }
@@ -78,37 +68,77 @@ struct MarketView: View {
 
 
 
-struct CustomItemView: View {
-    let title: String
-    let imageUrl: URL?
-
+struct MarketItemView: View {
+    let market: Market
+    
     var body: some View {
-        HStack {
-            AsyncImage(url: imageUrl) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView() // Show a loading spinner
-                        .frame(width: 50, height: 50)
-                case .success(let image):
-                    image.resizable()
-                        .scaledToFit()
-                        .frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                case .failure:
-                    Image(systemName: "photo") // Fallback image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(.gray)
-                @unknown default:
-                    EmptyView()
+        VStack(alignment: .leading) {
+            HStack {
+                AsyncImage(url: market.image) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView() // Show a loading spinner
+                            .frame(width: 50, height: 50)
+                    case .success(let image):
+                        image.resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    case .failure:
+                        Image(systemName: "photo") // Fallback image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.gray)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
+                
+                Text(market.title ?? "Loading...")
+                    .font(.headline)
+                    .padding(.leading, 8)
             }
+            .padding(.vertical, 5)
             
-            Text(title)
-                .font(.headline)
-                .padding(.leading, 8) // Add spacing between image and text
+            VStack {
+                ProbabilityBarView(label: "Yes", probability: market.yesProb ?? 0.0, color: Color(red: 51/255, green: 91/255, blue: 97/255))
+                ProbabilityBarView(label: "No", probability: market.noProb ?? 0.0, color: Color(red: 89/255, green: 38/255, blue: 96/255))
+            }
+            .padding(.bottom, 5)
         }
-        .padding(.vertical, 5)
     }
 }
+
+struct ProbabilityBarView: View {
+    let label: String
+    let probability: Double
+    let color: Color
+    
+    
+    let barWidth: CGFloat = 300
+    
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            // Background bar
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(.systemGray4))
+                .frame(height: 30)
+            
+            RoundedRectangle(cornerRadius: 8)
+                .fill(color)
+                .frame(width: barWidth * CGFloat(probability / 100), height: 30)
+
+            HStack {
+                Text("\(label) ∙ \(Int(probability))%")
+                    .padding(.leading, 8)
+                    .bold()
+                Spacer()
+            }
+            .frame(height: 30)
+        }
+        .frame(height: 30)
+    }
+}
+

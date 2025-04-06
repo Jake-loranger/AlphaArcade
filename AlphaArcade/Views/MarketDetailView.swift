@@ -451,38 +451,38 @@ struct OrderButtonsView: View {
         HStack(spacing: 16) { // Add spacing between buttons
             Button(action: { onSelect("Yes") }) {
                 Text("Yes")
-                    .font(.title2)
+                    .font(.title3)
                     .bold()
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(8)
                     .background(
                         RoundedRectangle(cornerRadius: 5)
-                            .fill(Color(red: 51/255, green: 91/255, blue: 97/255))
+                            .fill(OptionColor.optionOne.background)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color(red: 109/255, green: 239/255, blue: 252/255), lineWidth: 1)
+                            .stroke(OptionColor.optionOne.outline, lineWidth: 1)
                     )
                     .foregroundColor(Color.white)
-                    .shadow(color: Color(red: 109/255, green: 239/255, blue: 252/255).opacity(0.5), radius: 8)
+                    .shadow(color: OptionColor.optionOne.outline.opacity(0.5), radius: 8)
             }
 
             Button(action: { onSelect("No") }) {
                 Text("No")
-                    .font(.title2)
+                    .font(.title3)
                     .bold()
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(8)
                     .background(
                         RoundedRectangle(cornerRadius: 5)
-                            .fill(Color(red: 89/255, green: 38/255, blue: 96/255))
+                            .fill(OptionColor.optionTwo.background)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color(red: 234/255, green: 63/255, blue: 247/255), lineWidth: 1)
+                            .stroke(OptionColor.optionTwo.outline, lineWidth: 1)
                     )
                     .foregroundColor(Color.white)
-                    .shadow(color: Color(red: 234/255, green: 63/255, blue: 247/255).opacity(0.5), radius: 8)
+                    .shadow(color: OptionColor.optionTwo.outline.opacity(0.5), radius: 8)
             }
         }
         .padding([.leading, .trailing])
