@@ -103,7 +103,17 @@ struct MarketItemView: View {
                 ProbabilityBarView(label: "Yes", probability: market.yesProb ?? 0.0, color: OptionColor.optionOne.background)
                 ProbabilityBarView(label: "No", probability: market.noProb ?? 0.0, color: OptionColor.optionTwo.background)
             }
-            .padding(.bottom, 5)
+            .padding(.vertical, 5)
+            
+            HStack {
+                Text("14 Mar, 2025")
+                    .font(.caption)
+                Spacer()
+                Text("$\(DataFormatter.formattedValue(market.volume ?? 0)) Vol.")
+                    .font(.caption)
+            }
+            .padding(.vertical, 5)
+
         }
         .background(
             NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {

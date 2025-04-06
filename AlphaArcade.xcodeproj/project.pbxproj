@@ -19,6 +19,7 @@
 		A16D52402D8B81D100730BE1 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D523F2D8B81D100730BE1 /* ProfileViewModel.swift */; };
 		A1EEF17E2D9DF0BD00AC76BB /* WalletMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EEF17D2D9DF0AC00AC76BB /* WalletMetrics.swift */; };
 		A1EEF1822DA2DBAE00AC76BB /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EEF1812DA2DBAA00AC76BB /* Colors.swift */; };
+		A1EEF1852DA3025E00AC76BB /* DataFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EEF1842DA3025900AC76BB /* DataFormatter.swift */; };
 		A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */; };
 		A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F8682D2D7A5C910014FF4B /* MainView.swift */; };
 		A1F868302D7A5C990014FF4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F8682F2D7A5C990014FF4B /* Assets.xcassets */; };
@@ -58,6 +59,7 @@
 		A16D523F2D8B81D100730BE1 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		A1EEF17D2D9DF0AC00AC76BB /* WalletMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletMetrics.swift; sourceTree = "<group>"; };
 		A1EEF1812DA2DBAA00AC76BB /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		A1EEF1842DA3025900AC76BB /* DataFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFormatter.swift; sourceTree = "<group>"; };
 		A1F868282D7A5C910014FF4B /* AlphaArcade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlphaArcade.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaArcadeApp.swift; sourceTree = "<group>"; };
 		A1F8682D2D7A5C910014FF4B /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -135,6 +137,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		A1EEF1832DA3024200AC76BB /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A1EEF1842DA3025900AC76BB /* DataFormatter.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		A1F8681F2D7A5C910014FF4B = {
 			isa = PBXGroup;
 			children = (
@@ -158,10 +168,11 @@
 		A1F8682A2D7A5C910014FF4B /* AlphaArcade */ = {
 			isa = PBXGroup;
 			children = (
-				A1EEF17F2DA2DB2100AC76BB /* Utilities */,
+				A1EEF1832DA3024200AC76BB /* Helpers */,
 				A16D52332D81051300730BE1 /* ViewModels */,
 				A16D52282D7E918D00730BE1 /* Views */,
 				A16D52242D7E90D400730BE1 /* Models */,
+				A1EEF17F2DA2DB2100AC76BB /* Utilities */,
 				A1F8682B2D7A5C910014FF4B /* AlphaArcadeApp.swift */,
 				A1F8682D2D7A5C910014FF4B /* MainView.swift */,
 				A1F8682F2D7A5C990014FF4B /* Assets.xcassets */,
@@ -336,6 +347,7 @@
 				A16D52402D8B81D100730BE1 /* ProfileViewModel.swift in Sources */,
 				A16D52382D824A5C00730BE1 /* Orderbook.swift in Sources */,
 				A1F8682C2D7A5C910014FF4B /* AlphaArcadeApp.swift in Sources */,
+				A1EEF1852DA3025E00AC76BB /* DataFormatter.swift in Sources */,
 				A16D523C2D88CBCB00730BE1 /* Profile.swift in Sources */,
 				A16D52262D7E911400730BE1 /* Market.swift in Sources */,
 				A16D522C2D80F54B00730BE1 /* ProflieView.swift in Sources */,
