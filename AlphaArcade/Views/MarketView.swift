@@ -11,31 +11,29 @@ struct MarketView: View {
     @State private var activeMarkets: [Market] = []
     @State private var resolvedMarkets: [Market] = []
     @State private var isLoading = false
-
+    
     var body: some View {
         NavigationStack {
             List {
-                if !activeMarkets.isEmpty {
-                    Section(header: Text("Active Markets")) {
-                        ForEach(activeMarkets) { market in
-                            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
-                                MarketItemView(market: market)
-                            }
-                        }
-                    }
-                }
-            }
+                   if !activeMarkets.isEmpty {
+                       Section(header: Text("Active Markets")) {
+                           ForEach(activeMarkets) { market in
+                               MarketItemView(market: market)
+                           }
+                       }
+                   }
+               }
             .refreshable {
                 await fetchMarketData()
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                        Image("HorizontalLogo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 42)
-                            .padding([.leading, .bottom], 8)
-                    }
+                    Image("HorizontalLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 42)
+                        .padding([.leading, .bottom], 8)
+                }
             }
         }
         .task {
@@ -102,11 +100,17 @@ struct MarketItemView: View {
             .padding(.vertical, 5)
             
             VStack {
-                ProbabilityBarView(label: "Yes", probability: market.yesProb ?? 0.0, color: Color(red: 51/255, green: 91/255, blue: 97/255))
-                ProbabilityBarView(label: "No", probability: market.noProb ?? 0.0, color: Color(red: 89/255, green: 38/255, blue: 96/255))
+                ProbabilityBarView(label: "Yes", probability: market.yesProb ?? 0.0, color: OptionColor.optionOne.background)
+                ProbabilityBarView(label: "No", probability: market.noProb ?? 0.0, color: OptionColor.optionTwo.background)
             }
             .padding(.bottom, 5)
         }
+        .background(
+            NavigationLink(destination: MarketDetailView(marketId: nil, market: market)) {
+                EmptyView() // Empty view ensures no visible chevron
+            }
+            .opacity(0) // Make the NavigationLink completely transparent
+        )
     }
 }
 
