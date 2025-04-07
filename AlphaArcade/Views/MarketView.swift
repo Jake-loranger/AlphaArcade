@@ -11,6 +11,7 @@ struct MarketView: View {
     @State private var activeMarkets: [Market] = []
     @State private var resolvedMarkets: [Market] = []
     @State private var isLoading = false
+    private let session = URLSession(configuration: .default)
     
     var body: some View {
         NavigationStack {
@@ -19,6 +20,7 @@ struct MarketView: View {
                        Section(header: Text("Active Markets")) {
                            ForEach(activeMarkets) { market in
                                MarketItemView(market: market)
+                                   .task { try? await downloadImage(for: market) }
                            }
                        }
                    }
@@ -62,6 +64,17 @@ struct MarketView: View {
             print("Failed to fetch data:", error)
         }
     }
+    
+    func downloadImage(for market: Market) async throws {
+        guard let index = self.activeMarkets.firstIndex(where: { $0.id == market.id }),
+              self.activeMarkets[index].imageDataURL == nil,
+              let imageURL = market.image
+        else { return }
+
+        let (data, _) = try await session.data(from: imageURL)
+        let dataURL = URL(string: "data:image/png;base64," + data.base64EncodedString())
+        self.activeMarkets[index].imageDataURL = dataURL
+    }
 }
 
 
@@ -72,10 +85,10 @@ struct MarketItemView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                AsyncImage(url: market.image) { phase in
+                AsyncImage(url: market.imageDataURL ?? market.image) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView() // Show a loading spinner
+                        ProgressView()
                             .frame(width: 50, height: 50)
                     case .success(let image):
                         image.resizable()
@@ -83,7 +96,7 @@ struct MarketItemView: View {
                             .frame(width: 50, height: 50)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     case .failure:
-                        Image(systemName: "photo") // Fallback image
+                        Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 50, height: 50)

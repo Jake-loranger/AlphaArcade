@@ -37,6 +37,7 @@ struct Market: Identifiable, Codable {
     let topic: String?
     let resolution: Int?
     let image: URL?
+    var imageDataURL: URL?
     let volume: Double?
     let marketVolume: Double?
     let fees: Double?
