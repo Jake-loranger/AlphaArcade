@@ -8,25 +8,22 @@
 import SwiftUI
 
 struct MarketView: View {
-    @State private var activeMarkets: [Market] = []
-    @State private var resolvedMarkets: [Market] = []
-    @State private var isLoading = false
-    private let session = URLSession(configuration: .default)
-    
+    @StateObject private var viewModel = MarketViewModel()
+
     var body: some View {
         NavigationStack {
             List {
-                   if !activeMarkets.isEmpty {
-                       Section(header: Text("Active Markets")) {
-                           ForEach(activeMarkets) { market in
-                               MarketItemView(market: market)
-                                   .task { try? await downloadImage(for: market) }
-                           }
-                       }
-                   }
-               }
+                if !viewModel.activeMarkets.isEmpty {
+                    Section(header: Text("Active Markets")) {
+                        ForEach(viewModel.activeMarkets) { market in
+                            MarketItemView(market: market)
+                                .task { try? await viewModel.downloadImage(for: market) }
+                        }
+                    }
+                }
+            }
             .refreshable {
-                await fetchMarketData()
+                await viewModel.fetchMarketData()
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -39,44 +36,10 @@ struct MarketView: View {
             }
         }
         .task {
-            await fetchMarketData()
+            await viewModel.fetchMarketData()
         }
-    }
-
-    /// Fetches market data from API
-    func fetchMarketData() async {
-        guard !isLoading else { return }
-        isLoading = true
-        defer { isLoading = false }
-
-        let apiURL = URL(string: "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-markets")!
-
-        do {
-            let (data, _) = try await URLSession.shared.data(from: apiURL)
-            
-            let decodedResponse = try JSONDecoder().decode(MarketResponse.self, from: data)
-            
-            DispatchQueue.main.async {
-                self.activeMarkets = decodedResponse.markets.filter { $0.resolution == nil && $0.title != nil && $0.options?.count == 1}
-                self.resolvedMarkets = decodedResponse.markets.filter { $0.resolution != nil && $0.title != nil }
-            }
-        } catch {
-            print("Failed to fetch data:", error)
-        }
-    }
-    
-    func downloadImage(for market: Market) async throws {
-        guard let index = self.activeMarkets.firstIndex(where: { $0.id == market.id }),
-              self.activeMarkets[index].imageDataURL == nil,
-              let imageURL = market.image
-        else { return }
-
-        let (data, _) = try await session.data(from: imageURL)
-        let dataURL = URL(string: "data:image/png;base64," + data.base64EncodedString())
-        self.activeMarkets[index].imageDataURL = dataURL
     }
 }
-
 
 
 struct MarketItemView: View {
@@ -85,7 +48,7 @@ struct MarketItemView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                AsyncImage(url: market.imageDataURL ?? market.image) { phase in
+                AsyncImage(url: market.imageData ?? market.image) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
