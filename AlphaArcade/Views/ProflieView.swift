@@ -227,10 +227,10 @@ struct ProfileDetailsView: View {
                             GridItem(.flexible(), spacing: 16),
                             GridItem(.flexible(), spacing: 16)
                 ], alignment: .leading, spacing: 16) {
-                    InfoItem(title: "Net Profit", value: "$\(formattedValue(viewModel.walletMetrics?.netProfit))")
-                    InfoItem(title: "Current Value", value: "$\(formattedValue(viewModel.walletMetrics?.currentPortfolioValue))")
-                    InfoItem(title: "Win Rate", value: formattedWinRate())
-                    InfoItem(title: "Total Volume", value: formattedTotalVolume())
+                    InfoItem(title: "Net Profit", value: "$\(DataFormatter.formattedValue(viewModel.walletMetrics?.netProfit))")
+                    InfoItem(title: "Current Value", value: "$\(DataFormatter.formattedValue(viewModel.walletMetrics?.currentPortfolioValue))")
+                    InfoItem(title: "Win Rate", value: DataFormatter.formattedWinRate(winningTrades: viewModel.walletMetrics?.winningTrades ?? 0, totalTrades: viewModel.walletMetrics?.totalTrades ?? 1))
+                    InfoItem(title: "Total Volume", value: DataFormatter.formattedTotalVolume(grossAmountSold: viewModel.walletMetrics?.grossAmountSold ?? 0, grossAmountBought: viewModel.walletMetrics?.grossAmountBought ?? 0))
                 }
                 .padding()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -265,40 +265,6 @@ struct ProfileDetailsView: View {
                 }
             )
         }
-    }
-    
-    // General-purpose formatter
-    private func formattedValue(_ value: Double?) -> String {
-        guard let value = value else {
-            return "N/A"
-        }
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 2
-        return formatter.string(from: NSNumber(value: value)) ?? "N/A"
-    }
-
-    // Formats the win rate as a percentage with 2 decimal places
-    private func formattedWinRate() -> String {
-        let winningTrades = viewModel.walletMetrics?.winningTrades ?? 0
-        let totalTrades = viewModel.walletMetrics?.totalTrades ?? 1
-        let winRate = Double(winningTrades) / Double(totalTrades)
-        return String(format: "%.2f%%", winRate * 100)
-    }
-
-    // Formats total volume as a currency with comma separation
-    private func formattedTotalVolume() -> String {
-        let grossAmountSold = viewModel.walletMetrics?.grossAmountSold ?? 0
-        let grossAmountBought = viewModel.walletMetrics?.grossAmountBought ?? 0
-        let totalVolume = grossAmountSold + grossAmountBought
-        
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 2
-        return formatter.string(from: NSNumber(value: totalVolume)) ?? "$0.00"
     }
 }
 
@@ -351,7 +317,7 @@ struct OpenOrdersView: View {
                                     .font(.headline)
                                     .padding(.bottom)
                             }
-                            .padding(.bottom)
+                            .padding(.bottom, 6)
                             
                             HStack {
                                 VStack(alignment: .leading) {
@@ -453,7 +419,7 @@ struct PositionsView: View {
                                     .font(.headline)
                                     .padding(.bottom)
                             }
-                            .padding(.bottom)
+                            .padding(.bottom, 6)
                             
                             HStack {
                                 

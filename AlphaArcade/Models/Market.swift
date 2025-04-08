@@ -37,16 +37,20 @@ struct Market: Identifiable, Codable {
     let topic: String?
     let resolution: Int?
     let image: URL?
+    var imageData: URL?
     let volume: Double?
     let marketVolume: Double?
     let fees: Double?
     let createdAt: Int?
+    let endTs: Int?
+    let comments: Int?
     let rules: String?
     let currentSpread: Double?
     let lastTradePrice: Double?
     let noProb: Double?
     let yesProb: Double?
     let options: [Option]?
+    let featured: Bool?
     
     var createdAtDate: Date? {
         guard let timestamp = createdAt else { return nil }
@@ -62,6 +66,15 @@ struct Match: Codable {
     let marketId: String?
 }
 
-struct Option: Codable {
+struct Option: Identifiable, Codable, Hashable {
+    let id: String
     let label: String
+    let image: URL?
+    let volume: Double?
+    let yesProb: Double?
+    let noProb: Double?
+    let comments: Int?
+    let yesAssetId: Int?
+    let noAssetId: Int?
+    let resolution: Int?
 }
