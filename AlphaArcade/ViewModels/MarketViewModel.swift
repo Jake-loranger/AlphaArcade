@@ -29,9 +29,16 @@ class MarketViewModel: ObservableObject {
                 let decodedResponse = try JSONDecoder().decode(MarketResponse.self, from: data)
                 
                 DispatchQueue.main.async {
-                    self.activeMarkets = decodedResponse.markets.filter { $0.resolution == nil && $0.title != nil && $0.options?.count == 1}
+                    self.activeMarkets = decodedResponse.markets.filter { $0.resolution == nil && $0.title != nil}
                     self.resolvedMarkets = decodedResponse.markets.filter { $0.resolution != nil && $0.title != nil }
                 }
+                
+                for market in decodedResponse.markets {
+                            // Only download image if needed (optional)
+                            if market.imageData == nil, let imageURL = market.image {
+                                try? await downloadImage(for: market)
+                            }
+                        }
             } catch {
                 print("Failed to fetch data:", error)
             }

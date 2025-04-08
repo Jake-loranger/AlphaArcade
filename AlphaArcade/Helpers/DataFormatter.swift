@@ -53,5 +53,13 @@ struct DataFormatter {
         
         return formattedDate
     }
+    
+    static func calculateTotalVolume(options: [Option]) -> Double {
+            // Sum up the volume of all options, handling nil values by treating them as 0
+            let totalVolume = options.reduce(0) { (result, option) in
+                result + (option.volume ?? 0)
+            }
+            return totalVolume
+        }
 
 }

@@ -15,9 +15,8 @@ struct MarketView: View {
             List {
                 if !viewModel.activeMarkets.isEmpty {
                     Section(header: Text("Active Markets")) {
-                        ForEach(viewModel.activeMarkets) { market in
+                        ForEach(viewModel.activeMarkets.sorted { ($0.featured ?? false) && !($1.featured ?? false) }) { market in
                             MarketItemView(market: market)
-                                .task { try? await viewModel.downloadImage(for: market) }
                         }
                     }
                 }
@@ -76,14 +75,42 @@ struct MarketItemView: View {
             .padding(.vertical, 5)
             
             VStack {
-                ProbabilityBarView(label: "Yes", probability: market.yesProb ?? 0.0, color: OptionColor.optionOne.background)
-                ProbabilityBarView(label: "No", probability: market.noProb ?? 0.0, color: OptionColor.optionTwo.background)
+                if let options = market.options, options.count > 1 {
+                    
+                    let colorOptions = OptionColor.colors
+                    
+                    ForEach(options.filter { $0.resolution == nil }.indices, id: \.self) { index in
+                        let option = options[index]
+                        
+                        // Use modulo to cycle through colors based on the index
+                        let colorOption: OptionColor = colorOptions[index % colorOptions.count]
+                        
+                        ProbabilityBarView(
+                            label: option.label,
+                            probability: (Double(option.yesProb ?? 0) / 10000),
+                            color: colorOption.background
+                        )
+                    }
+                } else {
+                    // For cases with 1 or fewer options
+                    ProbabilityBarView(label: "Yes", probability: market.yesProb ?? 0.0, color: OptionColor.optionOne.background)
+                    ProbabilityBarView(label: "No", probability: market.noProb ?? 0.0, color: OptionColor.optionTwo.background)
+                }
             }
             .padding(.vertical, 5)
             
             HStack {
-                Text("$\(DataFormatter.formattedValue(market.volume ?? 0)) Vol.")
-                    .font(.caption)
+                if let options = market.options, options.count > 1 {
+                    // Calculate total volume from market options if there are more than 1 option
+                    let totalVolume = DataFormatter.calculateTotalVolume(options: options)
+                    
+                    Text("$\(DataFormatter.formattedValue(totalVolume)) Vol.")
+                        .font(.caption)
+                } else {
+                    // Display the volume from the market object for a single option
+                    Text("$\(DataFormatter.formattedValue(market.volume ?? 0)) Vol.")
+                        .font(.caption)
+                }
                 Spacer()
                 Image(systemName: "bubble.left")
                     .font(.caption)
@@ -124,7 +151,7 @@ struct ProbabilityBarView: View {
                 .frame(width: barWidth * CGFloat(probability / 100), height: 30)
 
             HStack {
-                Text("\(label) ∙ \(Int(probability))%")
+                Text("\(Int(probability))% ∙ \(label)")
                     .padding(.leading, 8)
                     .bold()
                 Spacer()
