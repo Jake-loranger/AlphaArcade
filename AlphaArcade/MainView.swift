@@ -14,12 +14,14 @@ struct MainView: View {
                 .tabItem {
                     Label("Markets", systemImage: "gamecontroller")
                 }
-            
+
             ProfileView()
                 .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle")
+                    Label("Profile", systemImage: "person")
                 }
         }
+        .accentColor(.white)
+        .background(Color(UIColor.systemBackground))
     }
 }
 

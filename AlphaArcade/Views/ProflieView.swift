@@ -36,7 +36,7 @@ struct ProfileView: View {
                         Image(systemName: "person.circle.fill")
                             .resizable()
                             .frame(width: 30, height: 30)
-                            .foregroundColor(.blue)
+                            .foregroundColor(.white)
                     }
                     .sheet(isPresented: $showAccountSwitcher) {
                         AccountSwitcherView(currentWalletAddress: $currentWalletAddress)
@@ -53,7 +53,7 @@ struct ProfileView: View {
                 // Save the new active account to UserDefaults
                 UserDefaults.standard.set(newAccount, forKey: "ActiveAccount")
                 viewModel.fetchWalletDetails(walletInput: newAccount)
-                print(UserDefaults.standard.dictionaryRepresentation())
+//                print(UserDefaults.standard.dictionaryRepresentation())
             }
         }
         .refreshable {
@@ -112,7 +112,7 @@ struct AccountSwitcherView: View {
                 }) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                        Text("Add new item")
+                        Text("Add new account")
                     }
                 }
                 .padding()
@@ -120,7 +120,7 @@ struct AccountSwitcherView: View {
                     VStack(spacing: 20) {
                         Spacer()
                         
-                        Text("Add an Account")
+                        Text("Add Account")
                             .font(.headline)
                         
                         TextField("Enter Address or NFD", text: $newAccount)
