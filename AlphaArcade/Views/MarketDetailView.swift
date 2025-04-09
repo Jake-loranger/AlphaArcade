@@ -26,7 +26,7 @@ struct MarketDetailView: View {
                     ScrollView {
                         VStack(alignment: .leading) {
                             MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
-                            MarketChartView(matches: marketDetails.matches, market: marketDetails.market)
+                            MarketChartView(matches: marketDetails.matches, market: marketDetails.market, options: viewModel.options)
                             MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
                             MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
                             MarketRulesView(market: marketDetails.market)
@@ -51,10 +51,12 @@ struct MarketDetailView: View {
         }
         .onAppear {
             if let market = market {
+                viewModel.fetchMarketOptions(marketId: market.id ?? "")
                 viewModel.fetchMarketDetails(marketId: market.id ?? "")
                 viewModel.fetchComments(marketId: market.id ?? "")
                 viewModel.fetchOrderbook(marketId: market.id ?? "")
             } else if let marketId = marketId {
+                viewModel.fetchMarketOptions(marketId: marketId)
                 viewModel.fetchMarketDetails(marketId: marketId)
                 viewModel.fetchComments(marketId: marketId)
                 viewModel.fetchOrderbook(marketId: marketId)
@@ -62,10 +64,12 @@ struct MarketDetailView: View {
         }
         .refreshable {
             if let market = market {
+                viewModel.fetchMarketOptions(marketId: market.id ?? "")
                 viewModel.fetchMarketDetails(marketId: market.id ?? "")
                 viewModel.fetchComments(marketId: market.id ?? "")
                 viewModel.fetchOrderbook(marketId: market.id ?? "")
             } else if let marketId = marketId {
+                viewModel.fetchMarketOptions(marketId: marketId)
                 viewModel.fetchMarketDetails(marketId: marketId)
                 viewModel.fetchComments(marketId: marketId)
                 viewModel.fetchOrderbook(marketId: marketId)
@@ -158,6 +162,7 @@ struct MarketInfoView: View {
 struct MarketChartView: View {
     var matches: [Match]
     var market: Market
+    var options: [Option]?
 
     // Create the Yes and No price data arrays
     var yesData: [Double] {
@@ -184,25 +189,7 @@ struct MarketChartView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("No")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-                Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
-                    .font(.system(size: 16, weight: .bold))
-                    .lineLimit(1)
-                    .padding(.trailing, 6)
-                Text("Yes")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-                Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
-                    .font(.system(size: 16, weight: .bold))
-                    .lineLimit(1)
-            }
-
-            // Chart rendering
+            
             Chart(data, id: \.type) { dataSeries in
                 ForEach(dataSeries.values.indices, id: \.self) { index in
                     LineMark(
@@ -214,21 +201,85 @@ struct MarketChartView: View {
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .opacity(0.8)
             }
+            .chartLegend(.hidden)
             .chartForegroundStyleScale([
                 "Yes": OptionColor.optionOne.outline,
                 "No": OptionColor.optionTwo.outline
             ])
-            .chartYScale(domain: 0...100) // Y-axis domain for scaling
+            .chartYScale(domain: 0...100)
             .chartXAxis(.hidden)
             .chartYAxis {
                 AxisMarks { _ in
-                    AxisValueLabel() // Show labels on Y axis
+                    AxisValueLabel()
+                        .offset(x: 6)
                 }
             }
-            .padding(.vertical, 6)
+            .padding(.vertical, 8)
+            .frame(height: 200)
+            
+            HStack(spacing: 16) {
+                if (options != nil) && options?.count ?? 0 < 2 {
+                    // Show "Yes" and "No" only
+                    HStack(spacing: 12) {
+                        HStack(alignment: .top, spacing: 6) {
+                            Circle()
+                                .fill(OptionColor.optionTwo.outline)
+                                .frame(width: 6, height: 6)
+                                .padding(.top, 4)
+                            Text("No")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
+                                .lineLimit(1)
+                            Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
+                                .font(.system(size: 12, weight: .bold))
+                                .lineLimit(1)
+                        }
+
+                        HStack(alignment: .top, spacing: 6) {
+                            Circle()
+                                .fill(OptionColor.optionOne.outline)
+                                .frame(width: 6, height: 6)
+                                .padding(.top, 4)
+                            Text("Yes")
+                                .font(.system(size: 12))
+                                .foregroundColor(.gray)
+                                .lineLimit(1)
+                            Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
+                                .font(.system(size: 12, weight: .bold))
+                                .lineLimit(1)
+                        }
+                    }
+                } else if let options = options {
+                    let columns: [GridItem] = [
+                                GridItem(.flexible(), spacing: 10),
+                                GridItem(.flexible(), spacing: 10)
+                            ]
+                    
+                    LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
+                        ForEach(Array(options.enumerated()), id: \.1.id) { index, option in
+                            let optionColor = OptionColor.colors[index % OptionColor.colors.count]
+                            
+                            HStack(alignment: .top, spacing: 6) {
+                                Circle()
+                                    .fill(optionColor.outline)
+                                    .frame(width: 8, height: 8)
+                                    .padding(.top, 4)
+                                Text(option.label)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                                    .lineLimit(1)
+                                Text(option.yesProb != nil ? "\(option.yesProb! / 10000, specifier: "%.1f")%" : "-")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .lineLimit(1)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+            .padding(.top, 6)
         }
         .padding()
-        .frame(height: 300)
         .background(Color(UIColor.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }

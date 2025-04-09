@@ -6,6 +6,7 @@ class MarketDetailViewModel: ObservableObject {
     @Published var marketOrderbook: MarketOrderBook = [:]
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
+    @Published var options: [Option]?
     
     func fetchMarketDetails(marketId: String) {
         isLoading = true
@@ -44,6 +45,59 @@ class MarketDetailViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.marketDetails = marketDetail
                 }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
+                }
+            }
+        }
+        
+        task.resume()
+    }
+    
+    func fetchMarketOptions(marketId: String) {
+        isLoading = true
+        
+        let urlString = "https://g08245wvl7.execute-api.us-east-1.amazonaws.com/api/get-markets"
+        guard let url = URL(string: urlString) else {
+            errorMessage = "Invalid URL"
+            isLoading = false
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+            
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Error fetching data: \(error.localizedDescription)"
+                }
+                return
+            }
+            
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    self.errorMessage = "No data received"
+                }
+                return
+            }
+            
+            do {
+                let decodedResponse = try JSONDecoder().decode(MarketResponse.self, from: data)
+                
+                // Find the market by ID
+                if let market = decodedResponse.markets.first(where: { $0.id == marketId }) {
+                    DispatchQueue.main.async {
+                        self.options = market.options ?? []
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.errorMessage = "Market not found"
+                    }
+                }
+                
             } catch {
                 DispatchQueue.main.async {
                     self.errorMessage = "Failed to decode data: \(error.localizedDescription)"
