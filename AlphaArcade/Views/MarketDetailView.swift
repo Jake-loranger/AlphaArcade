@@ -26,7 +26,7 @@ struct MarketDetailView: View {
                     ScrollView {
                         VStack(alignment: .leading) {
                             MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
-                            MarketChartView(matches: marketDetails.matches, yesProb: marketDetails.market.yesProb, noProb: marketDetails.market.noProb)
+                            MarketChartView(matches: marketDetails.matches, market: marketDetails.market)
                             MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
                             MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
                             MarketRulesView(market: marketDetails.market)
@@ -156,23 +156,22 @@ struct MarketInfoView: View {
 }
 
 struct MarketChartView: View {
-    var matches: [Match]?
-    var yesProb: Double?
-    var noProb: Double?
+    var matches: [Match]
+    var market: Market
 
     // Create the Yes and No price data arrays
     var yesData: [Double] {
-        matches?.compactMap { match in
+        matches.compactMap { match in
             guard let price = match.price else { return nil }
             return Double(price) / 10000.0 // Yes Price
-        } ?? []
+        } 
     }
     
     var noData: [Double] {
-        matches?.compactMap { match in
+        matches.compactMap { match in
             guard let price = match.price else { return nil }
             return 100.0 - (Double(price) / 10000.0) // No Price
-        } ?? []
+        }
     }
     
     // Combine Yes and No data into a structured format
@@ -185,25 +184,14 @@ struct MarketChartView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("No")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-                Text(noProb != nil ? "\(noProb! / 10000, specifier: "%.1f")%" : "-")
-                    .font(.system(size: 16, weight: .bold))
-                    .lineLimit(1)
-                    .padding(.trailing, 6)
-                Text("Yes")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-                Text(yesProb != nil ? "\(yesProb! / 10000, specifier: "%.1f")%" : "-")
-                    .font(.system(size: 16, weight: .bold))
-                    .lineLimit(1)
-            }
-
-            // Chart rendering
+            Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
+                .font(.system(size: 16, weight: .bold))
+                .lineLimit(1)
+                .padding(.trailing, 6)
+            Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
+                .font(.system(size: 16, weight: .bold))
+                .lineLimit(1)
+            
             Chart(data, id: \.type) { dataSeries in
                 ForEach(dataSeries.values.indices, id: \.self) { index in
                     LineMark(
@@ -211,10 +199,14 @@ struct MarketChartView: View {
                         y: .value("Value", dataSeries.values[index])
                     )
                 }
-                .foregroundStyle(by: .value("Type", dataSeries.type)) // Apply different colors for Yes and No
+                .foregroundStyle(by: .value("Type", dataSeries.type))
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .opacity(0.8)
             }
+            .chartForegroundStyleScale([
+                "Yes": OptionColor.optionOne.outline,
+                "No": OptionColor.optionTwo.outline
+            ])
             .chartYScale(domain: 0...100) // Y-axis domain for scaling
             .chartXAxis(.hidden)
             .chartYAxis {
