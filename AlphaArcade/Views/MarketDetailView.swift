@@ -15,6 +15,7 @@ struct MarketDetailView: View {
     @StateObject private var viewModel = MarketDetailViewModel()
     @State private var showOrderView = false
     @State private var selectedOption: String? = "Yes"
+    @State private var isDataLoaded = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -32,48 +33,33 @@ struct MarketDetailView: View {
                             MarketRulesView(market: marketDetails.market)
                             MarketCommentsView(marketComments: marketComments)
                         }
-                        .padding(.bottom, 100) // Make room for sticky button
+                        .padding(.bottom, 100)
                         .padding(.horizontal)
+                    }
+                    .onAppear {
+                        isDataLoaded = true
                     }
                 } else if let error = viewModel.errorMessage {
                     Text(error).foregroundColor(.red)
                 }
             }
 
-            // Sticky button view on top
-            OrderButtonsView { option in
-                selectedOption = option
-                withAnimation {
-                    showOrderView = true
+            if isDataLoaded {
+                OrderButtonsView { option in
+                    selectedOption = option
+                    withAnimation {
+                        showOrderView = true
+                    }
                 }
+                .padding(.bottom)
+                .frame(maxWidth: .infinity, alignment: .bottom)
             }
-            .padding(.bottom)
         }
         .onAppear {
-            if let market = market {
-                viewModel.fetchMarketOptions(marketId: market.id ?? "")
-                viewModel.fetchMarketDetails(marketId: market.id ?? "")
-                viewModel.fetchComments(marketId: market.id ?? "")
-                viewModel.fetchOrderbook(marketId: market.id ?? "")
-            } else if let marketId = marketId {
-                viewModel.fetchMarketOptions(marketId: marketId)
-                viewModel.fetchMarketDetails(marketId: marketId)
-                viewModel.fetchComments(marketId: marketId)
-                viewModel.fetchOrderbook(marketId: marketId)
-            }
+            fetchData()
         }
         .refreshable {
-            if let market = market {
-                viewModel.fetchMarketOptions(marketId: market.id ?? "")
-                viewModel.fetchMarketDetails(marketId: market.id ?? "")
-                viewModel.fetchComments(marketId: market.id ?? "")
-                viewModel.fetchOrderbook(marketId: market.id ?? "")
-            } else if let marketId = marketId {
-                viewModel.fetchMarketOptions(marketId: marketId)
-                viewModel.fetchMarketDetails(marketId: marketId)
-                viewModel.fetchComments(marketId: marketId)
-                viewModel.fetchOrderbook(marketId: marketId)
-            }
+            fetchData()
         }
         .sheet(isPresented: $showOrderView) {
             if let option = selectedOption {
@@ -82,7 +68,22 @@ struct MarketDetailView: View {
             }
         }
     }
+
+    private func fetchData() {
+        if let market = market {
+            viewModel.fetchMarketOptions(marketId: market.id ?? "")
+            viewModel.fetchMarketDetails(marketId: market.id ?? "")
+            viewModel.fetchComments(marketId: market.id ?? "")
+            viewModel.fetchOrderbook(marketId: market.id ?? "")
+        } else if let marketId = marketId {
+            viewModel.fetchMarketOptions(marketId: marketId)
+            viewModel.fetchMarketDetails(marketId: marketId)
+            viewModel.fetchComments(marketId: marketId)
+            viewModel.fetchOrderbook(marketId: marketId)
+        }
+    }
 }
+
 
 struct MarketTitleView: View {
     let title: String?
