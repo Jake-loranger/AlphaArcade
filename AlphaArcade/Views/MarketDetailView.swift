@@ -184,14 +184,25 @@ struct MarketChartView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
-                .font(.system(size: 16, weight: .bold))
-                .lineLimit(1)
-                .padding(.trailing, 6)
-            Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
-                .font(.system(size: 16, weight: .bold))
-                .lineLimit(1)
-            
+            HStack {
+                Text("No")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
+                    .font(.system(size: 16, weight: .bold))
+                    .lineLimit(1)
+                    .padding(.trailing, 6)
+                Text("Yes")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                    .lineLimit(1)
+                Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
+                    .font(.system(size: 16, weight: .bold))
+                    .lineLimit(1)
+            }
+
+            // Chart rendering
             Chart(data, id: \.type) { dataSeries in
                 ForEach(dataSeries.values.indices, id: \.self) { index in
                     LineMark(
@@ -199,7 +210,7 @@ struct MarketChartView: View {
                         y: .value("Value", dataSeries.values[index])
                     )
                 }
-                .foregroundStyle(by: .value("Type", dataSeries.type))
+                .foregroundStyle(by: .value("Type", dataSeries.type)) // Apply different colors for Yes and No
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .opacity(0.8)
             }
