@@ -187,6 +187,14 @@ struct MarketChartView: View {
             (type: "No", values: noData)
         ]
     }
+    
+    var isMultiOptioned: Bool {
+        guard let options = options else {
+            return false
+        }
+        return options.count >= 2
+    }
+
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -219,7 +227,7 @@ struct MarketChartView: View {
             .frame(height: 200)
             
             HStack(spacing: 16) {
-                if (options != nil) && options?.count ?? 0 < 2 {
+                if !isMultiOptioned {
                     // Show "Yes" and "No" only
                     HStack(spacing: 12) {
                         HStack(alignment: .top, spacing: 6) {
@@ -415,6 +423,7 @@ struct MarketRulesView: View {
                 .font(.system(size: 14))
                 .foregroundColor(.gray)
                 .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             // Expandable Text
             Text(market.rules ?? "Cannot recieve rules at this moment")
@@ -456,6 +465,8 @@ struct MarketCommentsView: View {
                                 Text(comment.senderWallet ?? "--")
                                     .font(.system(size: 14, weight: .bold))
                                     .foregroundColor(Color.gray)
+                                    .truncationMode(.middle)
+                                    .lineLimit(1)
 
                                 Text(comment.text ?? "--")
                                     .font(.system(size: 14))
@@ -463,13 +474,14 @@ struct MarketCommentsView: View {
                             .padding(.vertical, 4)
                         }
                     } else {
-                        Text("None")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 14))
-                            .italic()
-                            .padding(.vertical, 8)
+                            Text("No Comments")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 10))
+                                .italic()
+                                .padding(.vertical, 8)
                     }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
@@ -519,7 +531,7 @@ struct OrderButtonsView: View {
                             .stroke(OptionColor.optionOne.outline, lineWidth: 1)
                     )
                     .foregroundColor(Color.white)
-                    .shadow(color: OptionColor.optionOne.outline.opacity(0.5), radius: 8)
+                    .shadow(color: OptionColor.optionOne.outline.opacity(0.5), radius: 4)
             }
 
             Button(action: { onSelect("No") }) {
@@ -537,7 +549,7 @@ struct OrderButtonsView: View {
                             .stroke(OptionColor.optionTwo.outline, lineWidth: 1)
                     )
                     .foregroundColor(Color.white)
-                    .shadow(color: OptionColor.optionTwo.outline.opacity(0.5), radius: 8)
+                    .shadow(color: OptionColor.optionTwo.outline.opacity(0.5), radius: 4)
             }
         }
         .padding([.leading, .trailing])
