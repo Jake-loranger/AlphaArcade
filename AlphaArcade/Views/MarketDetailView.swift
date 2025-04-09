@@ -16,6 +16,14 @@ struct MarketDetailView: View {
     @State private var showOrderView = false
     @State private var selectedOption: String? = "Yes"
     @State private var isDataLoaded = false
+    
+    
+    var isMultiOptioned: Bool {
+        guard let options = viewModel.options else {
+            return false
+        }
+        return options.count >= 2
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -27,7 +35,11 @@ struct MarketDetailView: View {
                     ScrollView {
                         VStack(alignment: .leading) {
                             MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
-                            MarketChartView(matches: marketDetails.matches, market: marketDetails.market, options: viewModel.options)
+                            if isMultiOptioned {
+                                MultiMarketChartView(matches: marketDetails.matches, market: marketDetails.market, options: viewModel.options)
+                            } else {
+                                BinaryMarketChartView(matches: marketDetails.matches, market: marketDetails.market, options: viewModel.options)
+                            }
                             MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
                             MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
                             MarketRulesView(market: marketDetails.market)
@@ -160,7 +172,7 @@ struct MarketInfoView: View {
     }
 }
 
-struct MarketChartView: View {
+struct BinaryMarketChartView: View {
     var matches: [Match]
     var market: Market
     var options: [Option]?
@@ -180,21 +192,12 @@ struct MarketChartView: View {
         }
     }
     
-    // Combine Yes and No data into a structured format
     var data: [(type: String, values: [Double])] {
         [
             (type: "Yes", values: yesData),
             (type: "No", values: noData)
         ]
     }
-    
-    var isMultiOptioned: Bool {
-        guard let options = options else {
-            return false
-        }
-        return options.count >= 2
-    }
-
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -206,7 +209,7 @@ struct MarketChartView: View {
                         y: .value("Value", dataSeries.values[index])
                     )
                 }
-                .foregroundStyle(by: .value("Type", dataSeries.type)) // Apply different colors for Yes and No
+                .foregroundStyle(by: .value("Type", dataSeries.type))
                 .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
                 .opacity(0.8)
             }
@@ -227,63 +230,34 @@ struct MarketChartView: View {
             .frame(height: 200)
             
             HStack(spacing: 16) {
-                if !isMultiOptioned {
-                    // Show "Yes" and "No" only
-                    HStack(spacing: 12) {
-                        HStack(alignment: .top, spacing: 6) {
-                            Circle()
-                                .fill(OptionColor.optionTwo.outline)
-                                .frame(width: 6, height: 6)
-                                .padding(.top, 4)
-                            Text("No")
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
-                                .lineLimit(1)
-                            Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
-                                .font(.system(size: 12, weight: .bold))
-                                .lineLimit(1)
-                        }
-
-                        HStack(alignment: .top, spacing: 6) {
-                            Circle()
-                                .fill(OptionColor.optionOne.outline)
-                                .frame(width: 6, height: 6)
-                                .padding(.top, 4)
-                            Text("Yes")
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
-                                .lineLimit(1)
-                            Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
-                                .font(.system(size: 12, weight: .bold))
-                                .lineLimit(1)
-                        }
+                HStack(spacing: 12) {
+                    HStack(alignment: .top, spacing: 6) {
+                        Circle()
+                            .fill(OptionColor.optionTwo.outline)
+                            .frame(width: 6, height: 6)
+                            .padding(.top, 4)
+                        Text("No")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                        Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
+                            .font(.system(size: 12, weight: .bold))
+                            .lineLimit(1)
                     }
-                } else if let options = options {
-                    let columns: [GridItem] = [
-                                GridItem(.flexible(), spacing: 10),
-                                GridItem(.flexible(), spacing: 10)
-                            ]
                     
-                    LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
-                        ForEach(Array(options.enumerated()), id: \.1.id) { index, option in
-                            let optionColor = OptionColor.colors[index % OptionColor.colors.count]
-                            
-                            HStack(alignment: .top, spacing: 6) {
-                                Circle()
-                                    .fill(optionColor.outline)
-                                    .frame(width: 8, height: 8)
-                                    .padding(.top, 4)
-                                Text(option.label)
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.gray)
-                                    .lineLimit(1)
-                                Text(option.yesProb != nil ? "\(option.yesProb! / 10000, specifier: "%.1f")%" : "-")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .lineLimit(1)
-                            }
-                        }
+                    HStack(alignment: .top, spacing: 6) {
+                        Circle()
+                            .fill(OptionColor.optionOne.outline)
+                            .frame(width: 6, height: 6)
+                            .padding(.top, 4)
+                        Text("Yes")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                        Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
+                            .font(.system(size: 12, weight: .bold))
+                            .lineLimit(1)
                     }
-                    .padding(.vertical, 8)
                 }
             }
             .padding(.top, 6)
@@ -294,6 +268,162 @@ struct MarketChartView: View {
     }
 }
 
+// Helper struct for chart series data
+struct OptionPriceSeries: Identifiable {
+    let id: String      // Option ID
+    let label: String   // Option label (will be used as the series type)
+    var values: [Double]    // Converted yes probability values (ordered by time)
+    let displayColor: Color // Color for this series
+}
+
+// MARK: - Build the Series Data
+func buildPriceSeries(matches: [Match], options: [Option]) -> [OptionPriceSeries] {
+    // Group matches by marketId (which corresponds to the option id)
+    let grouped = Dictionary(grouping: matches, by: { $0.marketId ?? "" })
+    var seriesArray: [OptionPriceSeries] = []
+    
+    for (index, option) in options.enumerated() {
+        let optionID = option.id
+        let optionLabel = option.label
+        
+        // Determine the custom color for this option (e.g., based on array index)
+        let optionColor = OptionColor.colors[index % OptionColor.colors.count].outline
+        
+        // Filter and sort matches that belong to this option by createdAt timestamp
+        let optionMatches = (grouped[optionID] ?? []).sorted {
+            ($0.createdAt ?? 0) < ($1.createdAt ?? 0)
+        }
+        
+        // Map the matches' price data to the "Yes" probability value
+        let values = optionMatches.compactMap { match -> Double? in
+            guard let price = match.price else { return nil }
+            return Double(price) / 10000.0
+        }
+        
+        // Only add series if there's at least one value
+        if !values.isEmpty {
+            let series = OptionPriceSeries(id: optionID, label: optionLabel, values: values, displayColor: optionColor)
+            seriesArray.append(series)
+        }
+    }
+    
+    return seriesArray
+}
+
+// MARK: - Padding Function
+func padSeries(_ series: [OptionPriceSeries]) -> [OptionPriceSeries] {
+    // Determine the maximum number of data points in any series
+    guard let maxCount = series.map({ $0.values.count }).max() else {
+        return series
+    }
+    
+    // For each series that has less than maxCount values, pad it with its last known value
+    let paddedSeries = series.map { series -> OptionPriceSeries in
+        var paddedValues = series.values
+        if let lastValue = paddedValues.last, paddedValues.count < maxCount {
+            // Append the last value until the count reaches maxCount
+            paddedValues.append(contentsOf: Array(repeating: lastValue, count: maxCount - paddedValues.count))
+        }
+        return OptionPriceSeries(id: series.id, label: series.label, values: paddedValues, displayColor: series.displayColor)
+    }
+    
+    return paddedSeries
+}
+
+// MARK: - MultiMarketChartView Implementation
+
+struct MultiMarketChartView: View {
+    var matches: [Match]
+    var market: Market
+    var options: [Option]?
+    
+    // Build and pad the series data
+    var seriesData: [OptionPriceSeries] {
+        guard let options = options else { return [] }
+        let builtSeries = buildPriceSeries(matches: matches, options: options)
+        return padSeries(builtSeries)
+    }
+    
+    // Compute the overall minimum and maximum values from your seriesData
+    var yMin: Double {
+        let allValues = seriesData.flatMap { $0.values }
+        guard let minVal = allValues.min() else { return 0 }
+        return minVal - (minVal * 0.05) // 5% padding below min
+    }
+
+    var yMax: Double {
+        let allValues = seriesData.flatMap { $0.values }
+        guard let maxVal = allValues.max() else { return 100 }
+        return maxVal + (maxVal * 0.05) // 5% padding above max
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            // SwiftUI Chart with the same Y axis scale for all series.
+            Chart {
+                ForEach(seriesData) { series in
+                    ForEach(series.values.indices, id: \.self) { index in
+                        LineMark(
+                            x: .value("Time Index", index),
+                            y: .value("Yes Price", series.values[index])
+                        )
+                        .foregroundStyle(by: .value("Type", series.label))
+                        .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                        .opacity(0.8)
+                    }
+                }
+            }
+            .chartLegend(.hidden)
+            .chartForegroundStyleScale(
+                domain: seriesData.map { $0.label },
+                range: seriesData.map { $0.displayColor }
+            )
+            .chartYScale(domain: yMin...yMax)
+            .chartXAxis(.hidden)
+            .chartYAxis {
+                AxisMarks { _ in
+                    AxisValueLabel().offset(x: 6)
+                }
+            }
+            .padding(.vertical, 8)
+            .frame(height: 200)
+            
+            // Example label grid below the chart to show each option's info
+            HStack(spacing: 16) {
+                let columns: [GridItem] = [
+                    GridItem(.flexible(), spacing: 10),
+                    GridItem(.flexible(), spacing: 10)
+                ]
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
+                    if let options = options {
+                        ForEach(Array(options.enumerated()), id: \.1.id) { index, option in
+                            let optionColor = OptionColor.colors[index % OptionColor.colors.count].outline
+                            HStack(alignment: .top, spacing: 6) {
+                                Circle()
+                                    .fill(optionColor)
+                                    .frame(width: 8, height: 8)
+                                    .padding(.top, 4)
+                                Text(option.label)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                                    .lineLimit(1)
+                                Text(option.yesProb != nil ?
+                                     "\(option.yesProb! / 10000, specifier: "%.1f")%" : "-")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .lineLimit(1)
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+            .padding(.top, 6)
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
 
 struct MarketOrderBookView: View {
     @State var orderbook: MarketOrderBook
@@ -531,7 +661,7 @@ struct OrderButtonsView: View {
                             .stroke(OptionColor.optionOne.outline, lineWidth: 1)
                     )
                     .foregroundColor(Color.white)
-                    .shadow(color: OptionColor.optionOne.outline.opacity(0.5), radius: 4)
+                    .shadow(color: OptionColor.optionOne.outline.opacity(0.5), radius: 6)
             }
 
             Button(action: { onSelect("No") }) {
@@ -549,7 +679,7 @@ struct OrderButtonsView: View {
                             .stroke(OptionColor.optionTwo.outline, lineWidth: 1)
                     )
                     .foregroundColor(Color.white)
-                    .shadow(color: OptionColor.optionTwo.outline.opacity(0.5), radius: 4)
+                    .shadow(color: OptionColor.optionTwo.outline.opacity(0.5), radius: 6)
             }
         }
         .padding([.leading, .trailing])
