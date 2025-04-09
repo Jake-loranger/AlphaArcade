@@ -15,9 +15,10 @@ enum OptionColor {
     case optionFive
     case optionSix
     case optionSeven
+    case optionEight
     
     // Static array to hold all color options
-    static let colors: [OptionColor] = [.optionOne, .optionTwo, .optionThree, .optionFour, .optionFive, .optionSix, .optionSeven]
+    static let colors: [OptionColor] = [.optionOne, .optionTwo, .optionThree, .optionFour, .optionFive, .optionSix, .optionSeven, .optionEight]
 
     var outline: Color {
         switch self {
@@ -35,6 +36,8 @@ enum OptionColor {
             return Color(red: 255/255, green: 231/255, blue: 75/255)
         case .optionSeven:
             return Color(red: 75/255, green: 255/255, blue: 114/255)
+        case .optionEight:
+            return Color(red: 255/255, green: 75/255, blue: 195/255)
         }
     }
 
@@ -54,6 +57,8 @@ enum OptionColor {
             return Color(red: 184/255, green: 167/255, blue: 60/255)
         case .optionSeven:
             return Color(red: 53/255, green: 135/255, blue: 71/255)
+        case .optionEight:
+            return Color(red: 135/255, green: 53/255, blue: 108/255)
         }
     }
 }
