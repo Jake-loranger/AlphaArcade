@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// Decodes API response while filtering out invalid data
 struct MarketResponse: Codable {
@@ -77,4 +78,11 @@ struct Option: Identifiable, Codable, Hashable {
     let yesAssetId: Int?
     let noAssetId: Int?
     let resolution: Int?
+}
+
+struct OptionPriceSeries: Identifiable {
+    let id: String      // Option ID
+    let label: String   // Option label (will be used as the series type)
+    var values: [Double]    // Converted yes probability values (ordered by time)
+    let displayColor: Color // Color for this series
 }

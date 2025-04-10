@@ -230,18 +230,18 @@ struct BinaryMarketChartView: View {
             .frame(height: 200)
             
             HStack(spacing: 16) {
-                HStack(spacing: 12) {
+                HStack(spacing: 14) {
                     HStack(alignment: .top, spacing: 6) {
                         Circle()
                             .fill(OptionColor.optionTwo.outline)
                             .frame(width: 6, height: 6)
                             .padding(.top, 4)
                         Text("No")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(.gray)
                             .lineLimit(1)
                         Text(market.noProb != nil ? "\(market.noProb! / 10000, specifier: "%.1f")%" : "-")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .lineLimit(1)
                     }
                     
@@ -251,11 +251,11 @@ struct BinaryMarketChartView: View {
                             .frame(width: 6, height: 6)
                             .padding(.top, 4)
                         Text("Yes")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(.gray)
                             .lineLimit(1)
                         Text(market.yesProb != nil ? "\(market.yesProb! / 10000, specifier: "%.1f")%" : "-")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .lineLimit(1)
                     }
                 }
@@ -268,80 +268,17 @@ struct BinaryMarketChartView: View {
     }
 }
 
-// Helper struct for chart series data
-struct OptionPriceSeries: Identifiable {
-    let id: String      // Option ID
-    let label: String   // Option label (will be used as the series type)
-    var values: [Double]    // Converted yes probability values (ordered by time)
-    let displayColor: Color // Color for this series
-}
 
-// MARK: - Build the Series Data
-func buildPriceSeries(matches: [Match], options: [Option]) -> [OptionPriceSeries] {
-    // Group matches by marketId (which corresponds to the option id)
-    let grouped = Dictionary(grouping: matches, by: { $0.marketId ?? "" })
-    var seriesArray: [OptionPriceSeries] = []
-    
-    for (index, option) in options.enumerated() {
-        let optionID = option.id
-        let optionLabel = option.label
-        
-        // Determine the custom color for this option (e.g., based on array index)
-        let optionColor = OptionColor.colors[index % OptionColor.colors.count].outline
-        
-        // Filter and sort matches that belong to this option by createdAt timestamp
-        let optionMatches = (grouped[optionID] ?? []).sorted {
-            ($0.createdAt ?? 0) < ($1.createdAt ?? 0)
-        }
-        
-        // Map the matches' price data to the "Yes" probability value
-        let values = optionMatches.compactMap { match -> Double? in
-            guard let price = match.price else { return nil }
-            return Double(price) / 10000.0
-        }
-        
-        // Only add series if there's at least one value
-        if !values.isEmpty {
-            let series = OptionPriceSeries(id: optionID, label: optionLabel, values: values, displayColor: optionColor)
-            seriesArray.append(series)
-        }
-    }
-    
-    return seriesArray
-}
-
-// MARK: - Padding Function
-func padSeries(_ series: [OptionPriceSeries]) -> [OptionPriceSeries] {
-    // Determine the maximum number of data points in any series
-    guard let maxCount = series.map({ $0.values.count }).max() else {
-        return series
-    }
-    
-    // For each series that has less than maxCount values, pad it with its last known value
-    let paddedSeries = series.map { series -> OptionPriceSeries in
-        var paddedValues = series.values
-        if let lastValue = paddedValues.last, paddedValues.count < maxCount {
-            // Append the last value until the count reaches maxCount
-            paddedValues.append(contentsOf: Array(repeating: lastValue, count: maxCount - paddedValues.count))
-        }
-        return OptionPriceSeries(id: series.id, label: series.label, values: paddedValues, displayColor: series.displayColor)
-    }
-    
-    return paddedSeries
-}
-
-// MARK: - MultiMarketChartView Implementation
 
 struct MultiMarketChartView: View {
     var matches: [Match]
     var market: Market
     var options: [Option]?
     
-    // Build and pad the series data
     var seriesData: [OptionPriceSeries] {
         guard let options = options else { return [] }
-        let builtSeries = buildPriceSeries(matches: matches, options: options)
-        return padSeries(builtSeries)
+        let builtSeries = DataFormatter.buildPriceSeries(matches: matches, options: options)
+        return DataFormatter.padSeries(builtSeries)
     }
     
     // Compute the overall minimum and maximum values from your seriesData
