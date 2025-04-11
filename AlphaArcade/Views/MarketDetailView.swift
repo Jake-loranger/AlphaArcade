@@ -34,13 +34,35 @@ struct MarketDetailView: View {
                           let marketComments = viewModel.marketComments {
                     ScrollView {
                         VStack(alignment: .leading) {
-                            MarketTitleView(title: marketDetails.market.topic, image: marketDetails.market.image)
+                            MarketTitleView(
+                                title: marketDetails.market.topic,
+                                image: marketDetails.market.image)
                             if isMultiOptioned {
-                                MultiMarketChartView(matches: marketDetails.matches, market: marketDetails.market, options: viewModel.options)
+                                MultiMarketChartView(
+                                    matches: marketDetails.matches,
+                                    market: marketDetails.market,
+                                    options: viewModel.options
+                                )
+                                MarketInfoView(
+                                    volume: market?.options?.compactMap { $0.volume }.reduce(0, +),
+                                    marketVolume: market?.options?.compactMap { $0.marketVolume }.reduce(0, +),
+                                    fees: market?.options?.compactMap { $0.fees }.reduce(0, +),
+                                    date: marketDetails.market.endDate
+                                )
                             } else {
-                                BinaryMarketChartView(matches: marketDetails.matches, market: marketDetails.market, options: viewModel.options)
+                                BinaryMarketChartView(
+                                    matches: marketDetails.matches,
+                                    market: marketDetails.market,
+                                    options: viewModel.options
+                                )
+                                MarketInfoView(
+                                    volume: (marketDetails.market.volume ?? 0) / 1_000_000,
+                                    marketVolume: marketDetails.market.marketVolume,
+                                    fees: marketDetails.market.fees,
+                                    date: marketDetails.market.createdAtDate
+                                )
                             }
-                            MarketInfoView(volume: marketDetails.market.volume, marketVolume: marketDetails.market.marketVolume, fees: marketDetails.market.fees, date: marketDetails.market.createdAtDate)
+                            
                             MarketOrderBookView(orderbook: viewModel.marketOrderbook, market: marketDetails.market)
                             MarketRulesView(market: marketDetails.market)
                             MarketCommentsView(marketComments: marketComments)
@@ -149,8 +171,8 @@ struct MarketInfoView: View {
             GridItem(.flexible(), spacing: 16)
         ], alignment: .leading, spacing: 16) {
             InfoItem(title: "Volume", value: formattedNumber(volume))
-            InfoItem(title: "Market Volume", value: formattedNumber(marketVolume))
-            InfoItem(title: "Fees", value: formattedNumber(fees))
+            InfoItem(title: "Market Volume", value: formattedNumber((marketVolume ?? 0) / 1_000_000))
+            InfoItem(title: "Fees", value: formattedNumber((fees ?? 0) / 1_000_000))
             InfoItem(title: "Date", value: formattedDate(date))
         }
         .padding()
@@ -158,10 +180,16 @@ struct MarketInfoView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
     
-    // Helper function to format numbers
     func formattedNumber(_ value: Double?) -> String {
         guard let value = value else { return "N/A" }
-        return String(format: "$%.2f", value / 1_000_000) // Formats as millions with 2 decimal places
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+        formatter.locale = Locale.current // Uses your current locale, so $ is added automatically
+        
+        return formatter.string(from: NSNumber(value: value)) ?? "$0.00"
     }
     
     func formattedDate(_ date: Date?) -> String {

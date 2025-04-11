@@ -57,6 +57,10 @@ struct Market: Identifiable, Codable {
         guard let timestamp = createdAt else { return nil }
         return Date(timeIntervalSince1970: TimeInterval(timestamp) / 1000)
     }
+    var endDate: Date? {
+        guard let timestamp = endTs else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(timestamp) / 1000)
+    }
 }
 
 struct Match: Codable {
@@ -78,6 +82,8 @@ struct Option: Identifiable, Codable, Hashable {
     let yesAssetId: Int?
     let noAssetId: Int?
     let resolution: Int?
+    let fees: Double?
+    let marketVolume: Double?
 }
 
 struct OptionPriceSeries: Identifiable {

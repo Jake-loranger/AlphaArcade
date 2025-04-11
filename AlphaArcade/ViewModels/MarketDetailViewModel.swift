@@ -7,6 +7,7 @@ class MarketDetailViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     @Published var options: [Option]?
+    @Published var market: Market?
     
     func fetchMarketDetails(marketId: String) {
         isLoading = true
@@ -91,6 +92,7 @@ class MarketDetailViewModel: ObservableObject {
                 if let market = decodedResponse.markets.first(where: { $0.id == marketId }) {
                     DispatchQueue.main.async {
                         self.options = market.options ?? []
+//                        self.market = market
                     }
                 } else {
                     DispatchQueue.main.async {
