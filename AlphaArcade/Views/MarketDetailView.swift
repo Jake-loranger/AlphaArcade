@@ -409,51 +409,6 @@ struct MarketOrderBookView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if orderbook != nil {
-                
-                if let options = market?.options {
-                    // Get the index of the selected option (or default to 0)
-                    let selectedIndex = options.firstIndex { $0.id == selectedOptionId } ?? 0
-                    let selectedOptionColor = OptionColor.colors[selectedIndex % OptionColor.colors.count].background
-
-                    Picker("Choose Option", selection: $selectedOptionId) {
-                        ForEach(options, id: \.id) { option in
-                            Text(option.label)
-                                .tag(option.id as String?)
-                        }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 2)
-                    .background(Color(.systemGray4)) // Light gray background
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(selectedOptionColor, lineWidth: 6)
-                    )
-                    .cornerRadius(8)
-                    .onAppear {
-                        if selectedOptionId == nil {
-                            selectedOptionId = options.first?.id
-                            selectedOptionLabel = options.first?.label ?? ""
-                        }
-                    }
-                    .onChange(of: selectedOptionId) { newValue in
-                        if let selected = options.first(where: { $0.id == newValue }) {
-                            selectedOptionLabel = selected.label
-                        }
-                    }
-                    .padding(.bottom, 8)
-                }
-
-
-
-                
-                Picker("Select an option", selection: $selectedOption) {
-                    Text("Yes").tag("Yes")
-                    Text("No").tag("No")
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.bottom, 12)
-                
                 LazyVGrid(columns: columns, spacing: 4) {
                     Text("Trade").font(.system(size: 14)).foregroundColor(.gray)
                     Text("Price").font(.system(size: 14)).foregroundColor(.gray)
@@ -508,7 +463,47 @@ struct MarketOrderBookView: View {
                         )
                     }
                 }
+                
+                Picker("Select an option", selection: $selectedOption) {
+                    Text("Yes").tag("Yes")
+                    Text("No").tag("No")
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.top, 12)
+                
+                if let options = market?.options {
+                    // Get the index of the selected option (or default to 0)
+                    let selectedIndex = options.firstIndex { $0.id == selectedOptionId } ?? 0
+                    let selectedOptionColor = OptionColor.colors[selectedIndex % OptionColor.colors.count].background
 
+                    Picker("Choose Option", selection: $selectedOptionId) {
+                        ForEach(options, id: \.id) { option in
+                            Text(option.label)
+                                .tag(option.id as String?)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 2)
+                    .background(Color(.systemGray4)) // Light gray background
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(selectedOptionColor, lineWidth: 8)
+                    )
+                    .cornerRadius(8)
+                    .onAppear {
+                        if selectedOptionId == nil {
+                            selectedOptionId = options.first?.id
+                            selectedOptionLabel = options.first?.label ?? ""
+                        }
+                    }
+                    .onChange(of: selectedOptionId) { newValue in
+                        if let selected = options.first(where: { $0.id == newValue }) {
+                            selectedOptionLabel = selected.label
+                        }
+                    }
+                    .padding(.vertical, 6)
+                }
             } else {
                 ProgressView("Loading Orderbook...")
                     .padding()
