@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct AlphaArcadeApp: App {
+    init() {
+        UIView.appearance().overrideUserInterfaceStyle = .dark
+    }
+    
     var body: some Scene {
         WindowGroup {
             MainView() 
