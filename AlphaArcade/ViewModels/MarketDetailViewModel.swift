@@ -206,6 +206,7 @@ class MarketDetailViewModel: ObservableObject {
 
             task.resume()
         }
+    
 
     private func transformOrderBook(_ orderBook: MarketOrderBook) -> MarketOrderBook {
         var newOrderBook: MarketOrderBook = [:]

@@ -426,7 +426,8 @@ struct MarketOrderBookView: View {
                     if let marketData = orderbook[marketId] {
                         OrderSectionView(
                             orders: (selectedOption == "Yes" ? marketData.yes.asks : marketData.no.asks)
-                                .sorted { $0.price > $1.price }
+                                .sorted { $0.price > $1.price },
+                            isBuy: false
                         )
                     }
                 }
@@ -459,7 +460,8 @@ struct MarketOrderBookView: View {
                     if let marketData = orderbook[marketId] {
                         OrderSectionView(
                             orders: (selectedOption == "Yes" ? marketData.yes.bids : marketData.no.bids)
-                                .sorted { $0.price > $1.price }
+                                .sorted { $0.price > $1.price },
+                            isBuy: true
                         )
                     }
                 }
@@ -515,35 +517,51 @@ struct MarketOrderBookView: View {
     }
 }
 
-
 struct OrderSectionView: View {
     let orders: [OrderEntry]
+    let isBuy: Bool  // true = green (buy), false = red (sell)
 
-    let columns: [GridItem] = [
-        GridItem(.fixed(50), alignment: .leading),
-        GridItem(.flexible(), alignment: .trailing),
-        GridItem(.flexible(), alignment: .trailing),
-        GridItem(.flexible(), alignment: .trailing)
-    ]
+    var maxTotal: Double {
+        (orders.map { Double($0.total) }.max() ?? 1.0)
+    }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(orders, id: \.price) { order in
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        // Background bar color depends on isBuy
+                        Rectangle()
+                            .fill((isBuy ? Color.green : Color.red).opacity(0.2))
+                            .frame(width: geo.size.width * CGFloat(Double(order.total) / maxTotal))
 
-            LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(orders, id: \.price) { order in
-                    Text("")
-                    Text(String(format: "$%.2f", Double(order.price) / 1000000.0))
-                        .font(.system(size: 12))
-                    Text(String(format: "%.2f", Double(order.quantity) / 1000000.0))
-                        .font(.system(size: 12))
-                    Text(String(format: "$%.2f", Double(order.total) / 1000000000000.0))
-                        .font(.system(size: 12))
+                        // Row content
+                        HStack(spacing: 4) {
+                            Text("")
+                                 .frame(width: 50, alignment: .leading)
+                                 .font(.system(size: 12))
+                            Text(String(format: "$%.2f", Double(order.price) / 1_000_000.0))
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .font(.system(size: 12))
+                                .foregroundColor(isBuy ? .green : .red)
+
+                            Text(String(format: "%.2f", Double(order.quantity) / 1_000_000.0))
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .font(.system(size: 12))
+
+                            Text(String(format: "$%.2f", Double(order.total) / 1_000_000_000_000.0))
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .font(.system(size: 12))
+                        }
+                        .padding(.horizontal, 4)
+                    }
                 }
-                .padding(.vertical, 4)
+                .frame(height: 24)
             }
         }
     }
 }
+
 
 struct MarketRulesView: View {
     @State var market: Market
