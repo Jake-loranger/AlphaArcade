@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10E69CC2DDBFE45006DEFFA /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A10E69CB2DDBFE45006DEFFA /* CryptoSwift */; };
 		A16D52262D7E911400730BE1 /* Market.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52252D7E911400730BE1 /* Market.swift */; };
 		A16D522C2D80F54B00730BE1 /* ProflieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D522B2D80F54B00730BE1 /* ProflieView.swift */; };
 		A16D522E2D80F58800730BE1 /* MarketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D522D2D80F58800730BE1 /* MarketView.swift */; };
@@ -17,6 +18,8 @@
 		A16D523A2D86126800730BE1 /* Comments.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D52392D86126800730BE1 /* Comments.swift */; };
 		A16D523C2D88CBCB00730BE1 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D523B2D88CBCB00730BE1 /* Profile.swift */; };
 		A16D52402D8B81D100730BE1 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D523F2D8B81D100730BE1 /* ProfileViewModel.swift */; };
+		A1C518392DD12706004664E0 /* AlgorandHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C518382DD126FC004664E0 /* AlgorandHelper.swift */; };
+		A1C5183C2DD128AC004664E0 /* swift-algorand-sdk in Frameworks */ = {isa = PBXBuildFile; productRef = A1C5183B2DD128AC004664E0 /* swift-algorand-sdk */; };
 		A1EEF17E2D9DF0BD00AC76BB /* WalletMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EEF17D2D9DF0AC00AC76BB /* WalletMetrics.swift */; };
 		A1EEF1822DA2DBAE00AC76BB /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EEF1812DA2DBAA00AC76BB /* Colors.swift */; };
 		A1EEF1852DA3025E00AC76BB /* DataFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EEF1842DA3025900AC76BB /* DataFormatter.swift */; };
@@ -58,6 +61,7 @@
 		A16D52392D86126800730BE1 /* Comments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comments.swift; sourceTree = "<group>"; };
 		A16D523B2D88CBCB00730BE1 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		A16D523F2D8B81D100730BE1 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		A1C518382DD126FC004664E0 /* AlgorandHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgorandHelper.swift; sourceTree = "<group>"; };
 		A1EEF17D2D9DF0AC00AC76BB /* WalletMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletMetrics.swift; sourceTree = "<group>"; };
 		A1EEF1812DA2DBAA00AC76BB /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		A1EEF1842DA3025900AC76BB /* DataFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFormatter.swift; sourceTree = "<group>"; };
@@ -79,6 +83,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C5183C2DD128AC004664E0 /* swift-algorand-sdk in Frameworks */,
+				A10E69CC2DDBFE45006DEFFA /* CryptoSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +149,7 @@
 		A1EEF1832DA3024200AC76BB /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				A1C518382DD126FC004664E0 /* AlgorandHelper.swift */,
 				A1EEF1842DA3025900AC76BB /* DataFormatter.swift */,
 			);
 			path = Helpers;
@@ -297,6 +304,10 @@
 				Base,
 			);
 			mainGroup = A1F8681F2D7A5C910014FF4B;
+			packageReferences = (
+				A1C5183A2DD127F9004664E0 /* XCRemoteSwiftPackageReference "Swift-Algorand-Sdk" */,
+				A10E69CA2DDBFE45006DEFFA /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+			);
 			productRefGroup = A1F868292D7A5C910014FF4B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -346,6 +357,7 @@
 				A1EEF1822DA2DBAE00AC76BB /* Colors.swift in Sources */,
 				A16D52352D81052B00730BE1 /* MarketDetailViewModel.swift in Sources */,
 				A1F8682E2D7A5C910014FF4B /* MainView.swift in Sources */,
+				A1C518392DD12706004664E0 /* AlgorandHelper.swift in Sources */,
 				A1EEF17E2D9DF0BD00AC76BB /* WalletMetrics.swift in Sources */,
 				A16D522E2D80F58800730BE1 /* MarketView.swift in Sources */,
 				A16D52402D8B81D100730BE1 /* ProfileViewModel.swift in Sources */,
@@ -521,6 +533,7 @@
 				DEVELOPMENT_TEAM = 4C7H6LPRHA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -530,6 +543,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				"LIBRARY_SEARCH_PATHS[arch=*]" = "";
 				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JakeLoranger.AlphaArcade;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -680,6 +694,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A10E69CA2DDBFE45006DEFFA /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.4;
+			};
+		};
+		A1C5183A2DD127F9004664E0 /* XCRemoteSwiftPackageReference "Swift-Algorand-Sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Jesulonimi21/Swift-Algorand-Sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A10E69CB2DDBFE45006DEFFA /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10E69CA2DDBFE45006DEFFA /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
+		A1C5183B2DD128AC004664E0 /* swift-algorand-sdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1C5183A2DD127F9004664E0 /* XCRemoteSwiftPackageReference "Swift-Algorand-Sdk" */;
+			productName = "swift-algorand-sdk";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A1F868202D7A5C910014FF4B /* Project object */;
 }

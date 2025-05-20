@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MarketView: View {
     @StateObject private var viewModel = MarketViewModel()
+    private var algoHelper = AlgorandHelper()
 
     var body: some View {
         NavigationStack {
@@ -23,6 +24,9 @@ struct MarketView: View {
             }
             .refreshable {
                 await viewModel.fetchMarketData()
+                algoHelper.getOrderBook(marketAppId: 2829841613) { MarketOrderBook in
+                    print(MarketOrderBook.description)
+                }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

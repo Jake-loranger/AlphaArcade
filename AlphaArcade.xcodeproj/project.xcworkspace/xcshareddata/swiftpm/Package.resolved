@@ -1,0 +1,51 @@
+{
+  "originHash" : "fe742c446f8372275d396a533d3c0d6457cba2731213ee835fce42b05ea56ce5",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "cryptoswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/CryptoSwift",
+      "state" : {
+        "revision" : "729e01bc9b9dab466ac85f21fb9ee2bc1c61b258",
+        "version" : "1.8.4"
+      }
+    },
+    {
+      "identity" : "ed25519",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AndrewBarba/ed25519.git",
+      "state" : {
+        "revision" : "77bf751b603c573d50e45e2adb2e06776af219ae",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "messagepacker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hirotakan/MessagePacker.git",
+      "state" : {
+        "revision" : "4d8346c6bc579347e4df0429493760691c5aeca2",
+        "version" : "0.4.7"
+      }
+    },
+    {
+      "identity" : "swift-algorand-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Jesulonimi21/Swift-Algorand-Sdk",
+      "state" : {
+        "revision" : "12ad10e533b1028c7305bd6d0675fed3df3e83ae",
+        "version" : "1.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}
